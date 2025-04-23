@@ -7,4 +7,5 @@ const { packageUpload } = require('../middleware/multer');
 
 router.route('/create').post(isAuthenticated, isAdmin, packageUpload.array('images',5), createPackage);
 
+
 module.exports = router;
