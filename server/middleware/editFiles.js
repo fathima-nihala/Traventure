@@ -13,3 +13,21 @@ exports.deleteOldUserFile = async (oldFilePath) => {
         }
     }
 };
+
+
+exports.deleteOldPackages = async (oldFileUrl) => {
+    try {
+      const filename = oldFileUrl.split('/').pop();
+      // Notice the path matches your multer config: "./upload/package/"
+      const fullPath = path.join(process.cwd(), 'upload', 'package', filename);
+      
+      if (fs.existsSync(fullPath)) {
+        await fs.promises.unlink(fullPath);
+        console.log(`✅ Deleted file: ${fullPath}`);
+      } else {
+        console.warn(`⚠️ File not found: ${fullPath}`);
+      }
+    } catch (error) {
+      console.error(`❌ Failed to delete ${oldFileUrl}:`, error.message);
+    }
+  };
