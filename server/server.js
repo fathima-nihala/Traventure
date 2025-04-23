@@ -6,6 +6,7 @@ const globalError = require('./middleware/globalError');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const authRoutes = require('./routes/authRoutes');
+const packageRoutes = require('./routes/packageRoutes');
 
 
 
@@ -37,5 +38,7 @@ mongoose.connect(process.env.MONGO_URL)
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/packages', packageRoutes);
+
 
 module.exports = app;

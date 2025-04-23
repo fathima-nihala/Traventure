@@ -2,6 +2,8 @@ const multer = require('multer');
 const path = require('path');
 // const fs = require('fs');
 
+
+//user 
 const storage = multer.diskStorage({
     destination: function(req, file, cb ){
         cb(null, path.join(__dirname, '..', 'upload'));
@@ -37,10 +39,27 @@ const fileFilter = (req, file, cb) => {
   const upload = multer({
     storage: storage,
     limits: {
-      fileSize: 1024 * 1024 * 20 // 20MB file size limit
+      fileSize: 1024 * 1024 * 20 
     },
     fileFilter: fileFilter
   });
 
+  //packages
+const packageStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './upload/package/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname.split(".")[0].replaceAll(" ", "_").slice(0, 10) + Date.now() + path.extname(file.originalname));
+  }
+});
 
-  module.exports = { upload } ; 
+const packageUpload = multer({
+  storage: packageStorage,
+  limits: {
+    fileSize: 1024 * 1024 * 10
+  },
+  fileFilter: fileFilter
+})
+
+  module.exports = { upload, packageUpload } ; 

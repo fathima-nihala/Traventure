@@ -1,0 +1,41 @@
+/config/.env
+# --- ENVIRONMENT FILES ---
+.env
+*.env
+
+# --- NODE MODULES ---
+node_modules/
+
+# --- LOG FILES ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- SYSTEM FILES ---
+.DS_Store
+Thumbs.db
+
+# --- IDE FILES ---
+.vscode/
+.idea/
+
+# --- BUILD OUTPUT ---
+dist/
+build/
+
+# --- TEST COVERAGE ---
+coverage/
+
+# --- TEMPORARY FILES ---
+*.tmp
+*.swp
+
+# --- PACKAGE LOCK FILES (optional) ---
+package-lock.json
+yarn.lock
+
+# --- BACKUP FILES ---
+*.bak
+*.old
+*.orig
