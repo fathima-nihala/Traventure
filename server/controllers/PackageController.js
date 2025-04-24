@@ -192,3 +192,93 @@ exports.deletePackage = catchAsyncError(async (req, res, next) => {
   await Package.findByIdAndDelete(packageId);
   res.status(200).json({ message: 'Package deleted successfully' });
 });
+
+
+// Get package by ID
+exports.getPackageById = catchAsyncError(async (req, res, next) => {
+  const packageId = req.params.id;
+
+  const packageData = await Package.findById(packageId).populate('createdBy', 'name email');
+
+  if (!packageData) {
+    return next(new errorHandler('Package not found', 404));
+  }
+
+  res.status(200).json(packageData);
+});
+
+
+
+
+// Get package analytics (admin only)
+exports.getPackageAnalytics = catchAsyncError(async (req, res, next) => {
+  const today = new Date();
+
+  // 1. Count packages by status
+  const packagesCount = await Package.aggregate([
+    {
+      $addFields: {
+        status: {
+          $cond: {
+            if: { $lt: ['$endDate', today] },
+            then: 'completed',
+            else: {
+              $cond: {
+                if: {
+                  $and: [
+                    { $lte: ['$startDate', today] },
+                    { $gte: ['$endDate', today] }
+                  ]
+                },
+                then: 'active',
+                else: 'upcoming'
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      $group: {
+        _id: '$status',
+        count: { $sum: 1 }
+      }
+    }
+  ]);
+
+  // 2. Count bookings per package and join package details
+  const bookingsPerPackage = await Booking.aggregate([
+    {
+      $group: {
+        _id: '$package',
+        bookingsCount: { $sum: 1 }
+      }
+    },
+    {
+      $lookup: {
+        from: 'packages', //  lowercase 
+        localField: '_id',
+        foreignField: '_id',
+        as: 'packageDetails'
+      }
+    },
+    { $unwind: '$packageDetails' },
+    {
+      $project: {
+        _id: 1,
+        bookingsCount: 1,
+        packageName: '$packageDetails.fromLocation',
+        toLocation: '$packageDetails.toLocation',
+        startDate: '$packageDetails.startDate',
+        endDate: '$packageDetails.endDate'
+      }
+    },
+    { $sort: { bookingsCount: -1 } }
+  ]);
+
+  res.status(200).json({
+    success: true,
+    packagesCount,
+    bookingsPerPackage
+  });
+});
