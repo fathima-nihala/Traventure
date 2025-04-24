@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const authRoutes = require('./routes/authRoutes');
 const packageRoutes = require('./routes/packageRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
 
 
 
@@ -39,6 +40,7 @@ mongoose.connect(process.env.MONGO_URL)
 
 app.use('/api/auth', authRoutes);
 app.use('/api/packages', packageRoutes);
+app.use('/api/booking', bookingRoutes);
 
 
 module.exports = app;
