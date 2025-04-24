@@ -3,6 +3,8 @@ const Booking = require('../models/BookingModel');
 const ErrorHandler = require('../middleware/errorHandler');
 const catchAsyncError = require('../middleware/catchAsyncError');
 const { deleteOldPackages } = require('../middleware/editFiles');
+const errorHandler = require('../middleware/errorHandler');
+const {deletePackageImages} = require('../middleware/deleteFiles')
 
 //create package
 exports.createPackage = catchAsyncError(async (req, res, next) => {
@@ -136,14 +138,6 @@ exports.updatePackage = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler('End date must be after the existing start date', 400));
   }
 
-
-  // if (req.files && req.files.length > 0) {
-  //   console.log("Original image URLs:", packageToUpdate.images);
-    
-  //   for (const oldImage of packageToUpdate.images) {
-  //     await deleteOldPackages(oldImage);
-  //   }
-
   if (packageToUpdate.images && packageToUpdate.images.length > 0) {
     for (const oldImage of packageToUpdate.images) {
       await deleteOldPackages(oldImage);
@@ -170,4 +164,31 @@ exports.updatePackage = catchAsyncError(async (req, res, next) => {
     message: 'Package updated successfully',
     data: updatedPackage
   });
+});
+
+
+//delete package(admin only)
+exports.deletePackage = catchAsyncError(async (req, res, next) => {
+  const packageId = req.params.id;
+
+  const packageToDelete = await Package.findById(packageId);
+  if (!packageToDelete) {
+    return next(new errorHandler('Package not found', 404));
+  }
+
+  const bookingsCount = await Booking.countDocuments({ package: packageId });
+  if (bookingsCount > 0) {
+    return next(new errorHandler('Cannot delete package with existing bookings', 400));
+  }
+
+
+  if (packageToDelete.images && Array.isArray(packageToDelete.images) && packageToDelete.images.length > 0) {
+    console.log('Deleting package images:', packageToDelete.images);
+    await deletePackageImages(packageToDelete.images);
+  } else {
+    console.log('No images to delete for package:', packageId);
+  }
+
+  await Package.findByIdAndDelete(packageId);
+  res.status(200).json({ message: 'Package deleted successfully' });
 });
