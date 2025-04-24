@@ -111,6 +111,7 @@ exports.googleLogin = async (req, res) => {
         });
 
         const { email_verified, email, name, picture, sub: googleId } = ticket.getPayload();
+        console.log("Picture from Google:", picture);
 
         if (!email_verified) {
             return res.status(400).json({ message: 'Google email not verified' });
@@ -144,6 +145,7 @@ exports.googleLogin = async (req, res) => {
                 email: user.email,
                 name: user.name,
                 role: user.role,
+                profilePicture: user.profilePicture,
             }
         });
     } catch (error) {
