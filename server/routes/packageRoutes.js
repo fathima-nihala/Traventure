@@ -8,7 +8,7 @@ const { packageUpload } = require('../middleware/multer');
 router.route('/create').post(isAuthenticated, isAdmin, packageUpload.array('images',5), createPackage);
 router.route('/').get(isAuthenticated, getPackages);
 router.route('/:id').put(isAuthenticated, isAdmin, packageUpload.array('images',5), updatePackage);
-
+//update have error when updating images
 
 
 module.exports = router;

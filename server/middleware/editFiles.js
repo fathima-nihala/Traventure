@@ -18,8 +18,7 @@ exports.deleteOldUserFile = async (oldFilePath) => {
 exports.deleteOldPackages = async (oldFileUrl) => {
     try {
       const filename = oldFileUrl.split('/').pop();
-      // Notice the path matches your multer config: "./upload/package/"
-      const fullPath = path.join(process.cwd(), 'upload', 'package', filename);
+      const fullPath = path.join(__dirname, '..', 'upload', 'package', filename);
       
       if (fs.existsSync(fullPath)) {
         await fs.promises.unlink(fullPath);

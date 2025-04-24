@@ -136,14 +136,15 @@ exports.updatePackage = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler('End date must be after the existing start date', 400));
   }
 
+
   // if (req.files && req.files.length > 0) {
+  //   console.log("Original image URLs:", packageToUpdate.images);
+    
   //   for (const oldImage of packageToUpdate.images) {
-  //     await deleteOldPackages(oldImage); 
+  //     await deleteOldPackages(oldImage);
   //   }
 
-  if (req.files && req.files.length > 0) {
-    console.log("Original image URLs:", packageToUpdate.images);
-    
+  if (packageToUpdate.images && packageToUpdate.images.length > 0) {
     for (const oldImage of packageToUpdate.images) {
       await deleteOldPackages(oldImage);
     }
