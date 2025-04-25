@@ -13,7 +13,6 @@ function App() {
       <Route path="/" element={<Login />} />
       <Route path="/sign-up" element={<Register />} />
 
-
       <Route
         path="/admin/*"
         element={
@@ -32,7 +31,6 @@ function App() {
         }
       />
 
-      {/* Catch-all redirect */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

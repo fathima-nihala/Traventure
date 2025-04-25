@@ -61,23 +61,6 @@ const Login: React.FC = () => {
         }
     }, [user, navigate]);
 
-    // useEffect(() => {
-    //     if (window.google) {
-    //         window.google.accounts.id.initialize({
-    //             client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-    //             callback: handleGoogleCallback,
-    //         });
-
-    //         window.google.accounts.id.renderButton(
-    //             document.getElementById("google-signin-btn"),
-    //             {
-    //                 theme: "outline",
-    //                 size: "large",
-    //                 width: "100%",
-    //             }
-    //         );
-    //     }
-    // }, []);
 
     useEffect(() => {
         const loadGoogleScript = () => {
@@ -197,7 +180,7 @@ const Login: React.FC = () => {
 
                 <p className="text-center">
                     Don&apos;t have an account?{" "}
-                    <Link to="/sign-up" className="text-blue-600 hover:underline">
+                    <Link to="/sign-up" className="text-blue-600 hover:underline cursor-pointer">
                         Register
                     </Link>
                 </p>
