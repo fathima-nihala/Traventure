@@ -2,7 +2,6 @@ import  { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import DefaultLayout from '../layout/DefaultLayout';
 import Loader from '../../common/Loader';
-import PrivateRoute from '../../shared/ProtectedRoute'; 
 import DashHome from '../components/Pages/DashHome'
 
 
@@ -26,14 +25,7 @@ const AdminDashboard = () => {
   return (
     <DefaultLayout>
       <Routes>
-        <Route
-          path="admin"
-          element={
-            <PrivateRoute allowedRole="admin">
-              <DashHome />
-            </PrivateRoute>
-          }
-        />
+        <Route path="" element={<DashHome />} />
       </Routes>
     </DefaultLayout>
   );

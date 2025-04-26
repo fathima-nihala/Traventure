@@ -27,6 +27,9 @@ app.use(globalError);
 
 app.use(cors());
 
+app.use('/upload', express.static(path.join(__dirname, 'upload')));
+
+
 mongoose.connect(process.env.MONGO_URL)
 .then(() => {
     console.log("Database is connected successfully 😎 ");
