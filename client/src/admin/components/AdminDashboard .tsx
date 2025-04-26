@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import DefaultLayout from '../layout/DefaultLayout';
 import Loader from '../../common/Loader';
 import DashHome from '../components/Pages/DashHome'
+import Profile from './Pages/Profile';
 
 
 const AdminDashboard = () => {
@@ -26,6 +27,7 @@ const AdminDashboard = () => {
     <DefaultLayout>
       <Routes>
         <Route path="" element={<DashHome />} />
+        <Route path='/profile' element={<Profile/>}/>
       </Routes>
     </DefaultLayout>
   );

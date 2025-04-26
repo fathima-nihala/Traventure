@@ -1,6 +1,6 @@
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import { User, CalendarCheck, Package } from 'lucide-react'; 
+import { User, CalendarCheck, Package } from 'lucide-react';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -40,27 +40,18 @@ const DashHome = () => {
 
   return (
     <div className="p-6">
-      {/* Top Cards */}
-      {/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
         {cards.map((card, index) => (
-          <div key={index} className="bg-white rounded-lg shadow p-5 text-center">
+          <div key={index} className="bg-white rounded-lg shadow p-5 flex flex-col items-center text-center">
+            <div className="mb-3">
+              {card.icon}
+            </div>
             <h2 className="text-2xl font-semibold text-gray-700">{card.count}</h2>
             <p className="text-gray-500">{card.title}</p>
           </div>
         ))}
-      </div> */}
-
-<div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
-  {cards.map((card, index) => (
-    <div key={index} className="bg-white rounded-lg shadow p-5 flex flex-col items-center text-center">
-      <div className="mb-3">
-        {card.icon}
       </div>
-      <h2 className="text-2xl font-semibold text-gray-700">{card.count}</h2>
-      <p className="text-gray-500">{card.title}</p>
-    </div>
-  ))}
-</div>
 
       {/* Chart Section */}
       <div className="bg-white rounded-lg shadow p-5 mb-6">

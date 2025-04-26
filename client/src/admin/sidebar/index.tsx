@@ -114,9 +114,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </li>
                 <li>
                   <NavLink
-                    to="/dashboard/profile"
+                    to="/admin/profile"
                     className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:hover:bg-[#004471] dark:hover:bg-meta-4 ${
-                      pathname === '/dashboard/profile' ? 'bg-graydark dark:bg-meta-4' : ''
+                      pathname === '/admin/profile' ? 'bg-graydark dark:bg-meta-4' : ''
                     }`}
                   >
                     <svg
@@ -141,9 +141,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </li>
                 <li>
                   <NavLink
-                    to="/dashboard/packages"
+                    to="/admin/packages"
                     className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:hover:bg-[#004471] dark:hover:bg-meta-4 ${
-                      pathname === '/dashboard/packages' ? 'bg-graydark dark:bg-meta-4' : ''
+                      pathname === '/admin/packages' ? 'bg-graydark dark:bg-meta-4' : ''
                     }`}
                   >
                     <svg
@@ -172,9 +172,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </li>
                 <li>
                   <NavLink
-                    to="/dashboard/bookings"
+                    to="/admin/bookings"
                     className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:hover:bg-[#004471] dark:hover:bg-meta-4 ${
-                      pathname === '/dashboard/bookings' ? 'bg-graydark dark:bg-meta-4' : ''
+                      pathname === '/admin/bookings' ? 'bg-graydark dark:bg-meta-4' : ''
                     }`}
                   >
                     <svg
