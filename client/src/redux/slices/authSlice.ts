@@ -114,27 +114,27 @@ export const getCurrentUser = createAsyncThunk<User, void, { state: RootState; r
   }
 );
 
-// Update Profile
-export const updateProfile = createAsyncThunk<AuthResponse, FormData, { state: RootState; rejectValue: string }>(
-  'auth/updateProfile',
-  async (userData, { getState, rejectWithValue }) => {
-    try {
-      const { auth } = getState();
-      const response = await axios.put('/auth/profile', userData, {
-        headers: {
-          Authorization: `Bearer ${auth.token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return response.data;
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        return rejectWithValue(error.response?.data?.message || 'Profile update failed');
+  // Update Profile
+  export const updateProfile = createAsyncThunk<AuthResponse, FormData, { state: RootState; rejectValue: string }>(
+    'auth/updateProfile',
+    async (userData, { getState, rejectWithValue }) => {
+      try {
+        const { auth } = getState();
+        const response = await axios.put('/auth/profile', userData, {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        return response.data;
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          return rejectWithValue(error.response?.data?.message || 'Profile update failed');
+        }
+        return rejectWithValue('Profile update failed');
       }
-      return rejectWithValue('Profile update failed');
     }
-  }
-);
+  );
 
 // Get All Clients
 export const getAllClients = createAsyncThunk<ClientUser[], void, { state: RootState; rejectValue: string }>(
