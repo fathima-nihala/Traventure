@@ -24,11 +24,6 @@ const DashHome = () => {
     { title: 'Total Packages', count: 45, icon: <Package className="w-8 h-8 text-purple-500" /> },
   ];
 
-  // const userList = [
-  //   { id: 1, name: 'John Doe', email: 'john@example.com', image: 'https://i.pravatar.cc/150?img=1' },
-  //   { id: 2, name: 'Jane Smith', email: 'jane@example.com', image: 'https://i.pravatar.cc/150?img=2' },
-  //   { id: 3, name: 'Mike Johnson', email: 'mike@example.com', image: 'https://i.pravatar.cc/150?img=3' },
-  // ];
 
   const chartData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -72,31 +67,6 @@ const DashHome = () => {
       </div>
 
       {/* Table Section */}
-      {/* <div className="bg-white rounded-lg shadow p-5">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">Users</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="p-3">Image</th>
-                <th className="p-3">Name</th>
-                <th className="p-3">Email</th>
-              </tr>
-            </thead>
-            <tbody>
-              {userList.map((user) => (
-                <tr key={user.id} className="border-b hover:bg-gray-50">
-                  <td className="p-3">
-                    <img src={user.image} alt={user.name} className="w-10 h-10 rounded-full" />
-                  </td>
-                  <td className="p-3">{user.name}</td>
-                  <td className="p-3">{user.email}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div> */}
 
       <div className="bg-white rounded-lg shadow p-5">
         <h2 className="text-xl font-semibold mb-4 text-gray-700">Users</h2>
