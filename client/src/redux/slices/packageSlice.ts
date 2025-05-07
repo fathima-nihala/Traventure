@@ -3,7 +3,7 @@ import axios from 'axios';
 import { RootState } from '../store'; 
 
 // Interfaces
-interface Package {
+export interface Package {
   _id: string;
   fromLocation: string;
   toLocation: string;

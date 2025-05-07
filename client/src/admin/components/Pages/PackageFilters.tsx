@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 interface FilterProps {
   onFilterChange: (filters: any) => void;
@@ -121,7 +121,7 @@ const PackageFilters: React.FC<FilterProps> = ({ onFilterChange }) => {
           <button
             type="button"
             onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}
-            className="text-blue-600 hover:text-blue-800 flex items-center text-sm"
+            className="text-blue-600 hover:text-blue-800 flex items-center text-sm cursor-pointer"
           >
             {isAdvancedFiltersOpen ? '− Hide' : '+ Show'} Advanced Filters
           </button>
@@ -217,7 +217,7 @@ const PackageFilters: React.FC<FilterProps> = ({ onFilterChange }) => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1 cursor-pointer">
                   Items Per Page
                 </label>
                 <select
@@ -239,13 +239,13 @@ const PackageFilters: React.FC<FilterProps> = ({ onFilterChange }) => {
           <button
             type="button"
             onClick={resetFilters}
-            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded cursor-pointer"
           >
             Reset
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded"
+            className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded cursor-pointer"
           >
             Apply Filters
           </button>

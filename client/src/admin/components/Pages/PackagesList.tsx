@@ -55,7 +55,8 @@ const PackagesList: React.FC = () => {
           toast.success('Package deleted successfully');
         })
         .catch((err: Error | string) => {
-          toast.error(err || 'Failed to delete package');
+          const errorMessage = err instanceof Error ? err.message : err || 'Failed to delete package';
+          toast.error(errorMessage);
         });
     }
   };
@@ -83,7 +84,7 @@ const PackagesList: React.FC = () => {
               setSelectedPackage(null);
               setIsModalOpen(true);
             }}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer"
           >
             Add New Package
           </button>
