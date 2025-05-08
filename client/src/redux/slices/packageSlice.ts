@@ -123,7 +123,7 @@ export const getPackages = createAsyncThunk<PackageResponse, PackageFilters, { s
       if (filters.page) queryParams.append('page', filters.page.toString());
       if (filters.limit) queryParams.append('limit', filters.limit.toString());
       
-      const response = await axios.get(`/package?${queryParams.toString()}`, {
+      const response = await axios.get(`/packages/?${queryParams.toString()}`, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
       
@@ -322,3 +322,5 @@ const packageSlice = createSlice({
 
 export const { clearPackageError, clearSelectedPackage } = packageSlice.actions;
 export default packageSlice.reducer;
+
+

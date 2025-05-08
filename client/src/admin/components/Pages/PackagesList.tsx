@@ -20,7 +20,7 @@ const PackagesList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { packages, isLoading, error, count } = useSelector((state: RootState) => state.package);
   const { user } = useSelector((state: RootState) => state.auth);
-  
+    
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -73,6 +73,7 @@ const PackagesList: React.FC = () => {
 
   const isAdmin = user?.role === 'admin';
   const totalPages = Math.ceil(count / filters.limit);
+
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -143,6 +144,7 @@ const PackagesList: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         packageId={selectedPackage}
       />
+
     </div>
   );
 };
