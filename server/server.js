@@ -28,8 +28,7 @@ app.use(globalError);
 app.use(cors());
 
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
-app.use('/upload/package', express.static(path.join(__dirname, 'upload/package')));
-
+app.use('/uploads', express.static(path.join(__dirname, 'upload')));
 
 
 mongoose.connect(process.env.MONGO_URL)

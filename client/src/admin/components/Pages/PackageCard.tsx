@@ -80,7 +80,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, onDelete, onUpdate }) =>
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold">{pkg.fromLocation} to {pkg.toLocation}</h3>
-          <span className="font-bold text-blue-600">${calculateTotalPrice()}</span>
+          <span className="font-bold text-blue-600">₹ {calculateTotalPrice()}</span>
         </div>
 
         <div className="mb-3 text-sm text-gray-600">
@@ -124,7 +124,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, onDelete, onUpdate }) =>
               {onUpdate && (
                 <button
                   onClick={onUpdate}
-                  className="text-yellow-600 hover:text-yellow-800 text-sm"
+                  className="text-yellow-600 hover:text-yellow-800 text-sm cursor-pointer"
                 >
                   Edit
                 </button>
@@ -132,7 +132,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, onDelete, onUpdate }) =>
               {onDelete && (
                 <button
                   onClick={onDelete}
-                  className="text-red-600 hover:text-red-800 text-sm"
+                  className="text-red-600 hover:text-red-800 text-sm cursor-pointer"
                 >
                   Delete
                 </button>
