@@ -85,7 +85,7 @@ export const createPackage = createAsyncThunk<Package, FormData, { state: RootSt
   async (packageData: FormData, { getState, rejectWithValue }) => {
     try {
       const { auth } = getState();
-      const response = await axios.post('/package/create', packageData, {
+      const response = await axios.post('/packages/create', packageData, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
           'Content-Type': 'multipart/form-data',
@@ -143,7 +143,7 @@ export const getPackageById = createAsyncThunk<Package, string, { state: RootSta
   async (packageId: string, { getState, rejectWithValue }) => {
     try {
       const { auth } = getState();
-      const response = await axios.get(`/package/${packageId}`, {
+      const response = await axios.get(`/packages/${packageId}`, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
       return response.data;
@@ -162,7 +162,7 @@ export const updatePackage = createAsyncThunk<Package, { id: string; data: FormD
   async ({ id, data }: { id: string; data: FormData }, { getState, rejectWithValue }) => {
     try {
       const { auth } = getState();
-      const response = await axios.put(`/package/${id}`, data, {
+      const response = await axios.put(`/packages/${id}`, data, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
           'Content-Type': 'multipart/form-data',
@@ -184,7 +184,7 @@ export const deletePackage = createAsyncThunk<string, string, { state: RootState
   async (packageId: string, { getState, rejectWithValue }) => {
     try {
       const { auth } = getState();
-      await axios.delete(`/package/${packageId}`, {
+      await axios.delete(`/packages/${packageId}`, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
       return packageId;
@@ -203,7 +203,7 @@ export const getPackageAnalytics = createAsyncThunk<PackageAnalytics, void, { st
   async (_: void, { getState, rejectWithValue }) => {
     try {
       const { auth } = getState();
-      const response = await axios.get('/package/analytics', {
+      const response = await axios.get('/packages/analytics', {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
       return response.data;
