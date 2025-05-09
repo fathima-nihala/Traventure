@@ -4,7 +4,7 @@ const ErrorHandler = require('../middleware/errorHandler');
 const catchAsyncError = require('../middleware/catchAsyncError');
 const { deleteOldPackages } = require('../middleware/editFiles');
 const errorHandler = require('../middleware/errorHandler');
-const {deletePackageImages} = require('../middleware/deleteFiles')
+const { deletePackageImages } = require('../middleware/deleteFiles')
 
 //create package
 exports.createPackage = catchAsyncError(async (req, res, next) => {
@@ -105,7 +105,7 @@ exports.getPackages = catchAsyncError(async (req, res, next) => {
     .sort(sort)
     .skip(skip)
     .limit(Number(limit))
-    .populate('createdBy', 'name email') 
+    .populate('createdBy', 'name email')
     .lean({ virtuals: true });
 
   res.status(200).json({
@@ -120,6 +120,14 @@ exports.updatePackage = catchAsyncError(async (req, res, next) => {
   const packageId = req.params.id;
   const updates = req.body;
 
+  // Parse includedServices if it's a string
+  if (updates.includedServices && typeof updates.includedServices === 'string') {
+    try {
+      updates.includedServices = JSON.parse(updates.includedServices);
+    } catch (error) {
+      return next(new ErrorHandler('Invalid format for includedServices', 400));
+    }
+  }
   const packageToUpdate = await Package.findById(packageId);
   if (!packageToUpdate) {
     return next(new ErrorHandler('Package not found', 404));
@@ -142,7 +150,7 @@ exports.updatePackage = catchAsyncError(async (req, res, next) => {
     for (const oldImage of packageToUpdate.images) {
       await deleteOldPackages(oldImage);
     }
-  
+
     updates.images = req.files.map(file => {
       return `${process.env.BACKEND_URL}/uploads/package/${file.filename}`;
     });
