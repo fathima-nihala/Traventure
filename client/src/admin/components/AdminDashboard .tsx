@@ -4,7 +4,8 @@ import DefaultLayout from '../layout/DefaultLayout';
 import Loader from '../../common/Loader';
 import DashHome from '../components/Pages/DashHome'
 import Profile from './Pages/Profile';
-import PackagesList from './Pages/PackagesList';
+import PackagesList from './Pages/packages/PackagesList';
+import UserBookings from './Pages/booking/UserBookings';
 
 
 const AdminDashboard = () => {
@@ -30,6 +31,7 @@ const AdminDashboard = () => {
         <Route path="" element={<DashHome />} />
         <Route path='/profile' element={<Profile/>}/>
         <Route path='/packages' element={<PackagesList/>}/>
+        <Route path='/bookings' element={<UserBookings/>}/>
       </Routes>
     </DefaultLayout>
   );

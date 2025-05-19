@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../../redux/store';
-import { getPackages, deletePackage, clearPackageError } from '../../../redux/slices/packageSlice';
+import { AppDispatch, RootState } from '../../../../redux/store';
+import { getPackages, deletePackage, clearPackageError } from '../../../../redux/slices/packageSlice';
 import PackageCard from './PackageCard';
 import PackageModal from './PackageModal';
 import PackageFilters from './PackageFilters';
 import { toast } from 'react-toastify';
+import Breadcrumb from '../../../../common/Breadcrumb';
 
 // Define types for your filters
 interface PackageFilters {
@@ -77,8 +78,8 @@ const PackagesList: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Travel Packages</h1>
+      <div className="md:flex justify-between items-center mb-6">
+        <Breadcrumb pageName="Travel Packages" />
         {isAdmin && (
           <button
             onClick={() => {

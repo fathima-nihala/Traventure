@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../../redux/store';
-import { createPackage, getPackageById, updatePackage } from '../../../redux/slices/packageSlice';
+import { AppDispatch, RootState } from '../../../../redux/store';
+import { createPackage, getPackageById, updatePackage } from '../../../../redux/slices/packageSlice';
 import { toast } from 'react-toastify';
 
 interface PackageModalProps {

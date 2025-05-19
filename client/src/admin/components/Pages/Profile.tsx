@@ -6,6 +6,7 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { AppDispatch, RootState } from '../../../redux/store';
 import { getCurrentUser, updateProfile } from '../../../redux/slices/authSlice';
 import { useSnackbar } from 'notistack';
+import Breadcrumb from '../../../common/Breadcrumb';
 
 
 const style = {
@@ -137,104 +138,109 @@ const Profile = () => {
   }
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
-      <Card sx={{ width: 400, p: 3, textAlign: 'center' }}>
-        <Box sx={{ position: 'relative', display: 'inline-block', mb: 2 }}>
-          <Avatar
-            alt={user.name}
-            src={profilePicture || ''}
-            sx={{ width: 100, height: 100, margin: '0 auto' }}
-          />
-          <Box
-            sx={{
-              position: 'absolute',
-              bottom: 0,
-              right: 0,
-              backgroundColor: 'primary.main',
-              borderRadius: '50%',
-              p: 0.5,
-              cursor: 'pointer'
-            }}
-            onClick={handleOpen}
-          >
-            <PhotoCameraIcon sx={{ color: 'white', fontSize: 18 }} />
-          </Box>
-        </Box>
-        <Typography variant="h5" gutterBottom>{user.name}</Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>{user.email}</Typography>
-        <Button variant="contained" startIcon={<EditIcon />} onClick={handleOpen}>
-          Edit Profile
-        </Button>
-      </Card>
+    <>
+      {/* <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}> */}
+      <Box sx={{ display: 'flex',  flexDirection:'column',justifyContent: 'center', mt: 5 }}>
+      <Breadcrumb pageName="Profile" />
+        <Card sx={{  p: 3, textAlign: 'center' }}>
 
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
-          <Typography variant="h6" component="h2" gutterBottom>
-            Profile Details
-          </Typography>
-
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+          <Box sx={{ position: 'relative', display: 'inline-block', mb: 2 }}>
             <Avatar
-              alt={name}
+              alt={user.name}
               src={profilePicture || ''}
-              sx={{ width: 80, height: 80, mb: 1 }}
+              sx={{ width: 100, height: 100, margin: '0 auto' }}
             />
-            <input
-              accept="image/*"
-              style={{ display: 'none' }}
-              id="profile-picture-upload"
-              type="file"
-              onChange={handleFileChange}
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                backgroundColor: 'primary.main',
+                borderRadius: '50%',
+                p: 0.5,
+                cursor: 'pointer'
+              }}
+              onClick={handleOpen}
+            >
+              <PhotoCameraIcon sx={{ color: 'white', fontSize: 18 }} />
+            </Box>
+          </Box>
+          <Typography variant="h5" gutterBottom>{user.name}</Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>{user.email}</Typography>
+          <Button variant="contained" startIcon={<EditIcon />} onClick={handleOpen}>
+            Edit Profile
+          </Button>
+        </Card>
+
+        <Modal open={open} onClose={handleClose}>
+          <Box sx={style}>
+            <Typography variant="h6" component="h2" gutterBottom>
+              Profile Details
+            </Typography>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+              <Avatar
+                alt={name}
+                src={profilePicture || ''}
+                sx={{ width: 80, height: 80, mb: 1 }}
+              />
+              <input
+                accept="image/*"
+                style={{ display: 'none' }}
+                id="profile-picture-upload"
+                type="file"
+                onChange={handleFileChange}
+              />
+              <label htmlFor="profile-picture-upload">
+                <Button
+                  variant="outlined"
+                  component="span"
+                  size="small"
+                  startIcon={<PhotoCameraIcon />}
+                >
+                  Change Photo
+                </Button>
+              </label>
+            </Box>
+
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Name"
+              value={name}
+              onChange={handleNameChange}
             />
-            <label htmlFor="profile-picture-upload">
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Email"
+              value={email}
+              onChange={handleEmailChange}
+            />
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
               <Button
+                onClick={handleClose}
                 variant="outlined"
-                component="span"
-                size="small"
-                startIcon={<PhotoCameraIcon />}
+                color="secondary"
+                sx={{ mr: 2 }}
+                disabled={isSubmitting}
               >
-                Change Photo
+                Cancel
               </Button>
-            </label>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSaveChanges}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </Box>
           </Box>
-
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Name"
-            value={name}
-            onChange={handleNameChange}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Email"
-            value={email}
-            onChange={handleEmailChange}
-          />
-
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <Button
-              onClick={handleClose}
-              variant="outlined"
-              color="secondary"
-              sx={{ mr: 2 }}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSaveChanges}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
-    </Box>
+        </Modal>
+      </Box>
+    </>
   );
 };
 
