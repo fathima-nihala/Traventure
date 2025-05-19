@@ -116,6 +116,63 @@ exports.getPackages = catchAsyncError(async (req, res, next) => {
 });
 
 //update packages
+// exports.updatePackage = catchAsyncError(async (req, res, next) => {
+//   const packageId = req.params.id;
+//   const updates = req.body;
+
+//   // Parse includedServices if it's a string
+//   if (updates.includedServices && typeof updates.includedServices === 'string') {
+//     try {
+//       updates.includedServices = JSON.parse(updates.includedServices);
+//     } catch (error) {
+//       return next(new ErrorHandler('Invalid format for includedServices', 400));
+//     }
+//   }
+//   const packageToUpdate = await Package.findById(packageId);
+//   if (!packageToUpdate) {
+//     return next(new ErrorHandler('Package not found', 404));
+//   }
+
+//   if (updates.startDate && updates.endDate) {
+//     const startDate = new Date(updates.startDate);
+//     const endDate = new Date(updates.endDate);
+
+//     if (startDate >= endDate) {
+//       return next(new ErrorHandler('End date must be after start date', 400));
+//     }
+//   } else if (updates.startDate && new Date(updates.startDate) >= new Date(packageToUpdate.endDate)) {
+//     return next(new ErrorHandler('Start date must be before the existing end date', 400));
+//   } else if (updates.endDate && new Date(packageToUpdate.startDate) >= new Date(updates.endDate)) {
+//     return next(new ErrorHandler('End date must be after the existing start date', 400));
+//   }
+
+//   if (packageToUpdate.images && packageToUpdate.images.length > 0) {
+//     for (const oldImage of packageToUpdate.images) {
+//       await deleteOldPackages(oldImage);
+//     }
+
+//     updates.images = req.files.map(file => {
+//       return `${process.env.BACKEND_URL}/uploads/package/${file.filename}`;
+//     });
+//   } else {
+//     updates.images = packageToUpdate.images;
+//   }
+
+
+//   const updatedPackage = await Package.findByIdAndUpdate(packageId, {
+//     ...updates,
+//   }, { new: true });
+
+//   if (!updatedPackage) {
+//     return next(new ErrorHandler('Failed to update package', 500));
+//   }
+
+//   res.status(200).json({
+//     success: true,
+//     message: 'Package updated successfully',
+//     data: updatedPackage
+//   });
+// });
 exports.updatePackage = catchAsyncError(async (req, res, next) => {
   const packageId = req.params.id;
   const updates = req.body;
@@ -128,11 +185,13 @@ exports.updatePackage = catchAsyncError(async (req, res, next) => {
       return next(new ErrorHandler('Invalid format for includedServices', 400));
     }
   }
+  
   const packageToUpdate = await Package.findById(packageId);
   if (!packageToUpdate) {
     return next(new ErrorHandler('Package not found', 404));
   }
 
+  // Validate dates if both are provided
   if (updates.startDate && updates.endDate) {
     const startDate = new Date(updates.startDate);
     const endDate = new Date(updates.endDate);
@@ -146,22 +205,39 @@ exports.updatePackage = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler('End date must be after the existing start date', 400));
   }
 
-  if (packageToUpdate.images && packageToUpdate.images.length > 0) {
-    for (const oldImage of packageToUpdate.images) {
-      await deleteOldPackages(oldImage);
+  // Handle image updates - only modify images if new files are uploaded
+  if (req.files && req.files.length > 0) {
+    console.log('New images detected. Deleting old images and updating with new ones.');
+    
+    // Delete old images only if we're updating with new ones
+    if (packageToUpdate.images && packageToUpdate.images.length > 0) {
+      for (const oldImage of packageToUpdate.images) {
+        await deleteOldPackages(oldImage);
+      }
     }
-
+    
+    // Set the new images
     updates.images = req.files.map(file => {
       return `${process.env.BACKEND_URL}/uploads/package/${file.filename}`;
     });
   } else {
-    updates.images = packageToUpdate.images;
+    // No new files uploaded, keep existing images
+    console.log('No new images uploaded. Keeping existing images.');
+    delete updates.images; // Remove the images field from updates to prevent overwriting
   }
 
+  // Check for existingImages parameter (this is for when the frontend sends a list of images to keep)
+  if (updates.existingImages) {
+    try {
+      const existingImages = JSON.parse(updates.existingImages);
+      updates.images = existingImages;
+      delete updates.existingImages; // Remove the existingImages field
+    } catch (error) {
+      console.error('Error parsing existingImages:', error);
+    }
+  }
 
-  const updatedPackage = await Package.findByIdAndUpdate(packageId, {
-    ...updates,
-  }, { new: true });
+  const updatedPackage = await Package.findByIdAndUpdate(packageId, updates, { new: true });
 
   if (!updatedPackage) {
     return next(new ErrorHandler('Failed to update package', 500));
@@ -173,7 +249,6 @@ exports.updatePackage = catchAsyncError(async (req, res, next) => {
     data: updatedPackage
   });
 });
-
 
 //delete package(admin only)
 exports.deletePackage = catchAsyncError(async (req, res, next) => {

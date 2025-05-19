@@ -1,4 +1,4 @@
-  import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../redux/store';
 import { createPackage, getPackageById, updatePackage } from '../../../redux/slices/packageSlice';
@@ -13,7 +13,7 @@ interface PackageModalProps {
 const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { selectedPackage, isLoading } = useSelector((state: RootState) => state.package);
-  
+
   const [formData, setFormData] = useState({
     fromLocation: '',
     toLocation: '',
@@ -26,7 +26,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
     accommodationPrice: '',
     description: ''
   });
-  
+
   const [images, setImages] = useState<File[]>([]);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
@@ -49,7 +49,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
   useEffect(() => {
     if (selectedPackage && packageId) {
       console.log("Populating form with:", selectedPackage); // Debug log
-      
+
       setFormData({
         fromLocation: selectedPackage.fromLocation || '',
         toLocation: selectedPackage.toLocation || '',
@@ -62,7 +62,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
         accommodationPrice: selectedPackage.accommodationPrice?.toString() || '',
         description: selectedPackage.description || ''
       });
-      
+
       if (selectedPackage.images && selectedPackage.images.length > 0) {
         setExistingImages(selectedPackage.images);
       }
@@ -99,7 +99,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
       setImages(selectedFiles);
-      
+
       // Create preview URLs
       const previews = selectedFiles.map(file => URL.createObjectURL(file));
       setPreviewImages(previews);
@@ -108,20 +108,20 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       // Form validation
-      if (!formData.fromLocation || !formData.toLocation || !formData.startDate || 
-          !formData.endDate || !formData.basePrice || !formData.description) {
+      if (!formData.fromLocation || !formData.toLocation || !formData.startDate ||
+        !formData.endDate || !formData.basePrice || !formData.description) {
         toast.error('Please fill all required fields');
         return;
       }
-      
+
       if (new Date(formData.startDate) >= new Date(formData.endDate)) {
         toast.error('End date must be after start date');
         return;
       }
-      
+
       // Create FormData object for file upload
       const packageFormData = new FormData();
       packageFormData.append('fromLocation', formData.fromLocation);
@@ -129,33 +129,44 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
       packageFormData.append('startDate', formData.startDate);
       packageFormData.append('endDate', formData.endDate);
       packageFormData.append('basePrice', formData.basePrice);
-      
+
       const includedServices = {
         food: formData.foodIncluded,
         accommodation: formData.accommodationIncluded
       };
       packageFormData.append('includedServices', JSON.stringify(includedServices));
-      
+
       if (formData.foodIncluded) {
         packageFormData.append('foodPrice', formData.foodPrice || '0');
       }
-      
+
       if (formData.accommodationIncluded) {
         packageFormData.append('accommodationPrice', formData.accommodationPrice || '0');
       }
-      
+
       packageFormData.append('description', formData.description);
-      
+
       // Append images if any
-      images.forEach(image => {
-        packageFormData.append('images', image);
-      });
-      
-      // Append existing images to keep them
-      if (existingImages.length > 0) {
+      // images.forEach(image => {
+      //   packageFormData.append('images', image);
+      // });
+
+      //  Append existing images to keep them
+      // if (existingImages.length > 0) {
+      //   packageFormData.append('existingImages', JSON.stringify(existingImages));
+      // }
+
+      // Append images if any
+      if (images.length > 0) {
+        images.forEach(image => {
+          packageFormData.append('images', image);
+        });
+      } else if (packageId && existingImages.length > 0) {
+        // If no new images uploaded but there are existing ones, 
+        // pass them so they are preserved
         packageFormData.append('existingImages', JSON.stringify(existingImages));
       }
-      
+
       if (packageId) {
         // Update existing package
         await dispatch(updatePackage({ id: packageId, data: packageFormData })).unwrap();
@@ -165,7 +176,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
         await dispatch(createPackage(packageFormData)).unwrap();
         toast.success('Package created successfully');
       }
-      
+
       onClose();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Something went wrong';
@@ -191,7 +202,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
             </svg>
           </button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="p-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
@@ -207,7 +218,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
                 className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 To Location <span className="text-red-500">*</span>
@@ -221,7 +232,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
                 className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Start Date <span className="text-red-500">*</span>
@@ -235,7 +246,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
                 className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 End Date <span className="text-red-500">*</span>
@@ -249,7 +260,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
                 className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Base Price <span className="text-red-500">*</span>
@@ -265,7 +276,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
                 className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            
+
             <div className="flex flex-col">
               <div className="flex items-center mb-2">
                 <input
@@ -280,7 +291,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
                   Food Included
                 </label>
               </div>
-              
+
               {formData.foodIncluded && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -298,7 +309,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
                 </div>
               )}
             </div>
-            
+
             <div className="flex flex-col">
               <div className="flex items-center mb-2">
                 <input
@@ -313,7 +324,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
                   Accommodation Included
                 </label>
               </div>
-              
+
               {formData.accommodationIncluded && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -332,7 +343,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
               )}
             </div>
           </div>
-          
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Description <span className="text-red-500">*</span>
@@ -346,7 +357,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
               className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Images
@@ -358,7 +369,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
               onChange={handleImageChange}
               className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
             />
-            
+
             {/* Preview Images */}
             {previewImages.length > 0 && (
               <div className="mt-3">
@@ -376,7 +387,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
                 </div>
               </div>
             )}
-            
+
             {/* Existing Images */}
             {existingImages.length > 0 && (
               <div className="mt-3">
@@ -395,7 +406,7 @@ const PackageModal: React.FC<PackageModalProps> = ({ isOpen, onClose, packageId 
               </div>
             )}
           </div>
-          
+
           <div className="flex justify-end space-x-3">
             <button
               type="button"
