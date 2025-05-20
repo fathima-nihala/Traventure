@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { RootState } from '../store'; // ✅ Make sure this path matches your setup
 
-axios.defaults.baseURL = import.meta.env.VITE_PUBLIC_CLIENT_URL || 'http://localhost:5000/api/';
+axios.defaults.baseURL = import.meta.env.VITE_PUBLIC_CLIENT_URL;
 
 // Interfaces
 interface User {
@@ -158,6 +158,7 @@ export const getAllClients = createAsyncThunk<ClientUser[], void, { state: RootS
 // Logout
 export const logout = createAsyncThunk<null>('auth/logout', async () => {
   localStorage.removeItem('token');
+  localStorage.removeItem('role');
   return null;
 });
 

@@ -2,7 +2,21 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { RootState } from '../store'; 
 
-axios.defaults.baseURL = import.meta.env.VITE_PUBLIC_CLIENT_URL || 'http://localhost:5000/api';
+axios.defaults.baseURL = import.meta.env.VITE_PUBLIC_CLIENT_URL;
+
+// Set up axios with authentication interceptor
+axios.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
 
 // Types
 export interface User {

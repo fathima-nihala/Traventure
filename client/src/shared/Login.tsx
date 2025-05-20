@@ -134,7 +134,7 @@ const Login: React.FC = () => {
             } else if (user.role === "user") {
                 navigate("/home");
             } else {
-                navigate("/");
+                navigate("/login");
             }
         }
     };

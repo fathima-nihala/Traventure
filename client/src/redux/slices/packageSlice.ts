@@ -2,6 +2,8 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { RootState } from '../store'; 
 
+axios.defaults.baseURL = import.meta.env.VITE_PUBLIC_CLIENT_URL;
+
 // Interfaces
 export interface Package {
   _id: string;
