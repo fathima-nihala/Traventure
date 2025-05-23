@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
@@ -40,13 +41,6 @@ const BookingCountPerPackage: React.FC = () => {
   }, [bookings]);
   
   useEffect(() => {
-    // Add authorization check before dispatch
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.error("No authentication token found");
-      return;
-    }
-    
     dispatch(getAllBookings({}));
   }, [dispatch]);
 
