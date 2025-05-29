@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
+
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getAllBookings,
@@ -18,13 +19,103 @@ const UserBookings: React.FC = () => {
   const error = useSelector(selectBookingError);
   const analytics = useSelector(selectBookingAnalytics);
 
+  // Search state
+  const [searchFilters, setSearchFilters] = useState({
+    status: '',
+    userId: '',
+    packageId: '',
+    searchTerm: '' // For general search in user names/emails
+  });
+
+  // Get unique values for dropdowns
+  const filterOptions = useMemo(() => {
+    const statuses = new Set<string>();
+    const users = new Map<string, { id: string; name: string; email: string }>();
+    const packages = new Map<string, { id: string; name: string; locations: string }>();
+
+    bookings.forEach((booking: Booking) => {
+      // Collect statuses
+      if (booking.status) {
+        statuses.add(booking.status);
+      }
+
+      // Collect users
+      if (booking.user && booking.user._id !== 'guest') {
+        users.set(booking.user._id, {
+          id: booking.user._id,
+          name: booking.user.name || 'Unknown',
+          email: booking.user.email || 'No email'
+        });
+      }
+
+      // Collect packages
+      if (booking.package && booking.package._id) {
+        const packageName = booking.package.name || 
+          (booking.package.fromLocation && booking.package.toLocation 
+            ? `${booking.package.fromLocation} → ${booking.package.toLocation}`
+            : 'Unknown Package');
+        
+        packages.set(booking.package._id, {
+          id: booking.package._id,
+          name: packageName,
+          locations: booking.package.fromLocation && booking.package.toLocation 
+            ? `${booking.package.fromLocation} - ${booking.package.toLocation}`
+            : ''
+        });
+      }
+    });
+
+    return {
+      statuses: Array.from(statuses).sort(),
+      users: Array.from(users.values()).sort((a, b) => a.name.localeCompare(b.name)),
+      packages: Array.from(packages.values()).sort((a, b) => a.name.localeCompare(b.name))
+    };
+  }, [bookings]);
+
   const bookingsByUser = useMemo(() => {
     const userMap = new Map<string, UserBookingGroup>();
 
-    console.log('Processing bookings:', bookings); // Debug log
+    console.log('Processing bookings:', bookings);
 
-    bookings.forEach((booking: Booking) => {
-      // Handle bookings with null/missing user data (guest bookings, deleted users, etc.)
+    // Filter bookings based on search criteria
+    const filteredBookings = bookings.filter((booking: Booking) => {
+      // Status filter
+      if (searchFilters.status && booking.status !== searchFilters.status) {
+        return false;
+      }
+
+      // User ID filter
+      if (searchFilters.userId && booking.user?._id !== searchFilters.userId) {
+        return false;
+      }
+
+      // Package ID filter
+      if (searchFilters.packageId && booking.package?._id !== searchFilters.packageId) {
+        return false;
+      }
+
+      // General search term filter (search in user name, email, package name)
+      if (searchFilters.searchTerm) {
+        const searchLower = searchFilters.searchTerm.toLowerCase();
+        const userName = booking.user?.name?.toLowerCase() || '';
+        const userEmail = booking.user?.email?.toLowerCase() || '';
+        const packageName = booking.package?.name?.toLowerCase() || '';
+        const fromLocation = booking.package?.fromLocation?.toLowerCase() || '';
+        const toLocation = booking.package?.toLocation?.toLowerCase() || '';
+
+        if (!userName.includes(searchLower) && 
+            !userEmail.includes(searchLower) && 
+            !packageName.includes(searchLower) &&
+            !fromLocation.includes(searchLower) &&
+            !toLocation.includes(searchLower)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    filteredBookings.forEach((booking: Booking) => {
       const userId = booking?.user?._id || 'guest-bookings';
       const user = booking?.user || {
         _id: 'guest',
@@ -43,14 +134,37 @@ const UserBookings: React.FC = () => {
     });
 
     const result = Array.from(userMap.values());
-    console.log('Grouped bookings by user:', result); // Debug log
+    console.log('Grouped bookings by user:', result);
     return result;
-  }, [bookings]);
+  }, [bookings, searchFilters]);
 
   useEffect(() => {
-    dispatch(getAllBookings({}));
+    // Fetch bookings with current filters
+    dispatch(getAllBookings({
+      status: searchFilters.status || undefined,
+      userId: searchFilters.userId || undefined,
+      packageId: searchFilters.packageId || undefined
+    }));
     dispatch(getBookingAnalytics());
-  }, [dispatch]);
+  }, [dispatch, searchFilters.status, searchFilters.userId, searchFilters.packageId]);
+
+  const handleFilterChange = (key: string, value: string) => {
+    setSearchFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const clearFilters = () => {
+    setSearchFilters({
+      status: '',
+      userId: '',
+      packageId: '',
+      searchTerm: ''
+    });
+  };
+
+  const hasActiveFilters = Object.values(searchFilters).some(value => value !== '');
 
   // Helper function to format status
   const formatStatus = (status: string) => {
@@ -105,11 +219,137 @@ const UserBookings: React.FC = () => {
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Users and Their Bookings</h2>
         <p className="text-gray-600">Comprehensive view of all users and their booking history</p>
-        
-        {/* Debug info - remove in production */}
-        <div className="mt-4 p-3 bg-gray-100 rounded text-sm">
-          <p><strong>Total bookings loaded:</strong> {bookings.length}</p>
+      </div>
+
+      {/* Search and Filter Section */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+            <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            Search & Filter Bookings
+          </h3>
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="text-sm text-red-600 hover:text-red-800 font-medium flex items-center"
+            >
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Clear All Filters
+            </button>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* General Search */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Search
+            </label>
+            <input
+              type="text"
+              placeholder="Search users, packages..."
+              value={searchFilters.searchTerm}
+              onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Status Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Status
+            </label>
+            <select
+              value={searchFilters.status}
+              onChange={(e) => handleFilterChange('status', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">All Statuses</option>
+              {filterOptions.statuses.map(status => (
+                <option key={status} value={status}>
+                  {formatStatus(status)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* User Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              User
+            </label>
+            <select
+              value={searchFilters.userId}
+              onChange={(e) => handleFilterChange('userId', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">All Users</option>
+              {filterOptions.users.map(user => (
+                <option key={user.id} value={user.id}>
+                  {user.name} ({user.email})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Package Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Package
+            </label>
+            <select
+              value={searchFilters.packageId}
+              onChange={(e) => handleFilterChange('packageId', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">All Packages</option>
+              {filterOptions.packages.map(pkg => (
+                <option key={pkg.id} value={pkg.id}>
+                  {pkg.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Active Filters Display */}
+        {hasActiveFilters && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm text-gray-600 mr-2">Active filters:</span>
+              {searchFilters.searchTerm && (
+                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                  Search: "{searchFilters.searchTerm}"
+                </span>
+              )}
+              {searchFilters.status && (
+                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                  Status: {formatStatus(searchFilters.status)}
+                </span>
+              )}
+              {searchFilters.userId && (
+                <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+                  User: {filterOptions.users.find(u => u.id === searchFilters.userId)?.name}
+                </span>
+              )}
+              {searchFilters.packageId && (
+                <span className="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">
+                  Package: {filterOptions.packages.find(p => p.id === searchFilters.packageId)?.name}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Results Summary */}
+        <div className="mt-4 p-3 bg-gray-50 rounded-lg text-sm">
+          <p><strong>Total bookings found:</strong> {bookings.length}</p>
           <p><strong>Users with bookings:</strong> {bookingsByUser.length}</p>
+          <p><strong>Total bookings after filters:</strong> {bookingsByUser.reduce((acc, userGroup) => acc + userGroup.bookings.length, 0)}</p>
         </div>
       </div>
 
@@ -118,15 +358,18 @@ const UserBookings: React.FC = () => {
           <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <p className="text-gray-500 text-lg mt-4">No bookings found</p>
-          <p className="text-gray-400 text-sm mt-2">Check if the API is returning data correctly</p>
+          <p className="text-gray-500 text-lg mt-4">
+            {hasActiveFilters ? 'No bookings match your search criteria' : 'No bookings found'}
+          </p>
+          <p className="text-gray-400 text-sm mt-2">
+            {hasActiveFilters ? 'Try adjusting your filters' : 'Check if the API is returning data correctly'}
+          </p>
         </div>
       ) : (
         <div className="space-y-8">
           {bookingsByUser.map(({ user, bookings }) => (
             <div key={user._id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
               <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-6 border-b">
-                {/* Add a special indicator for guest/unknown bookings */}
                 {user._id === 'guest' && (
                   <div className="mb-3">
                     <span className="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full">
