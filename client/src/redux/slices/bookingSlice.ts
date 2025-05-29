@@ -42,6 +42,8 @@ export interface Package {
   location: string;
   images: string[];
   capacity: number;
+  fromLocation: string;
+  toLocation: string;
 }
 
 export interface SelectedServices {

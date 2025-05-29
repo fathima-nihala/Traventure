@@ -87,7 +87,7 @@ const DashHome = () => {
               <tbody>
                 {clients.length > 0 ? (
                   clients.map((user, index) => (
-                    <tr key={user._id} className="border-b hover:bg-gray-50">
+                    <tr key={user?._id} className="border-b hover:bg-gray-50">
                       <td className="p-3">{index + 1}</td>
                       <td className="p-3">
                         {/* <img
