@@ -5,6 +5,9 @@ import { AppDispatch, RootState } from '../../../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllClients } from '../../../redux/slices/authSlice';
 import { useEffect } from 'react';
+import UserImg from '../../../assets/user.png';
+import { getBookingAnalytics } from '../../../redux/slices/bookingSlice';
+import { getPackages } from '../../../redux/slices/packageSlice';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -12,16 +15,23 @@ const DashHome = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const { clients, isLoading } = useSelector((state: RootState) => state.auth);
+  const { analytics } = useSelector((state: RootState) => state.booking);
+  const { packages } = useSelector((state: RootState) => state.package);
+
+
+
 
   useEffect(() => {
     dispatch(getAllClients());
+    dispatch(getBookingAnalytics());
+    dispatch(getPackages({}));
   }, [dispatch]);
 
 
   const cards = [
     { title: 'Total Users', count: clients.length || 0, icon: <User className="w-8 h-8 text-blue-500" /> },
-    { title: 'Total Bookings', count: 350, icon: <CalendarCheck className="w-8 h-8 text-green-500" /> },
-    { title: 'Total Packages', count: 45, icon: <Package className="w-8 h-8 text-purple-500" /> },
+    { title: 'Total Bookings', count: analytics?.totalBookings, icon: <CalendarCheck className="w-8 h-8 text-green-500" /> },
+    { title: 'Total Packages', count: packages?.length, icon: <Package className="w-8 h-8 text-purple-500" /> },
   ];
 
 
@@ -100,7 +110,7 @@ const DashHome = () => {
                           }}
                         /> */}
                         <img
-                          src={user?.profilePicture}
+                          src={user?.profilePicture || UserImg}
                           alt={user.name}
                           className="w-10 h-10 rounded-full object-cover"
                           referrerPolicy="no-referrer"
