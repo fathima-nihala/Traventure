@@ -26,6 +26,7 @@ export interface Package {
     email: string;
   };
   status?: 'completed' | 'active' | 'upcoming';
+  createdAt: string;
 }
 
 interface PackageFilters {

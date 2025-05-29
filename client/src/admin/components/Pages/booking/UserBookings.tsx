@@ -75,7 +75,6 @@ const UserBookings: React.FC = () => {
   const bookingsByUser = useMemo(() => {
     const userMap = new Map<string, UserBookingGroup>();
 
-    console.log('Processing bookings:', bookings);
 
     // Filter bookings based on search criteria
     const filteredBookings = bookings.filter((booking: Booking) => {
@@ -134,7 +133,6 @@ const UserBookings: React.FC = () => {
     });
 
     const result = Array.from(userMap.values());
-    console.log('Grouped bookings by user:', result);
     return result;
   }, [bookings, searchFilters]);
 
