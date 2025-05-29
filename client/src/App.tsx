@@ -2,7 +2,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './shared/ProtectedRoute';
 // import Login from './shared/Login';
-import HomePage from './user/components/HomePage';
+import HomePage from './user/HomePage';
 import AdminDashboard from './admin/components/AdminDashboard ';
 import './App.css';
 import Register from './shared/Register';
@@ -27,7 +27,7 @@ function App() {
       />
 
       <Route
-        path="/home"
+        path="/home/*"
         element={
           <ProtectedRoute allowedRole="user">
             <HomePage />
