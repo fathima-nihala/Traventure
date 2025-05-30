@@ -16,7 +16,7 @@ const WebNavbar: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>(); // Type the dispatch
 
   // Get auth state from Redux
-  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   const navItems: NavItem[] = [
     { label: 'Home', href: '#home' },
