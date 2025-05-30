@@ -1,9 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
-import WebNavbar from '../shared/WebNavbar';
+import WebNavbar from '../../shared/WebNavbar';
 import { lazy, Suspense } from 'react';
-import Footer from '../shared/Footer';
+import Footer from '../../shared/Footer';
 
-const Home = lazy(() => import('./components/Home'));
+const Home = lazy(() => import('./pages/Home'));
 
 const HomePage = () => {
   return (
@@ -11,7 +11,7 @@ const HomePage = () => {
       <WebNavbar />
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
-          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Home />} />
         </Routes>
       </Suspense>
       <Footer />

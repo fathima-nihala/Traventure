@@ -56,7 +56,7 @@ const Login: React.FC = () => {
             if (role === "admin") {
                 navigate("/admin");
             } else if (role === "user") {
-                navigate("/home");
+                navigate("/");
             }
         }
     }, [user, navigate]);
@@ -132,7 +132,7 @@ const Login: React.FC = () => {
             if (user.role === "admin") {
                 navigate("/admin");
             } else if (user.role === "user") {
-                navigate("/home");
+                navigate("/");
             } else {
                 navigate("/login");
             }

@@ -10,6 +10,7 @@ interface NavItem {
 
 const WebNavbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  
 
   const navItems: NavItem[] = [
     { label: 'Home', href: '#home' },

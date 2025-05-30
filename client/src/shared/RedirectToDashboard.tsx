@@ -6,7 +6,7 @@ const RedirectToDashboard: React.FC = () => {
   const role = localStorage.getItem('role');
 
   if (token && role === 'admin') return <Navigate to="/admin" replace />;
-  if (token && role === 'user') return <Navigate to="/home" replace />;
+  if (token && role === 'user') return <Navigate to="/" replace />;
 
   return <Navigate to="/login" replace />;
 };
