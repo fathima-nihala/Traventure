@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import {
-  ShoppingCart,
-  Dribbble,
-  Linkedin,
-  Facebook,
-  Instagram,
-  Twitter,
   Mail,
   Phone,
   MapPin,
   ChevronRight
 } from 'lucide-react';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import TwitterIcon from '@mui/icons-material/Twitter';
+
 import Logo from '../assets/logos/logo-transparent.png'
 
 
@@ -47,13 +45,13 @@ const Footer = () => {
 
             <div className="flex space-x-3">
               <button className="w-10 h-10 cursor-pointer bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
-                <Facebook className="w-4 h-4" />
+                <FacebookIcon className="w-4 h-4" />
               </button>
               <button className="w-10 h-10 cursor-pointer bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
-                <Instagram className="w-4 h-4" />
+                <InstagramIcon className="w-4 h-4" />
               </button>
               <button className="w-10 h-10 cursor-pointer bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
-                <Twitter className="w-4 h-4" />
+                <TwitterIcon className="w-4 h-4" />
               </button>
             </div>
           </div>

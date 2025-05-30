@@ -12,7 +12,6 @@ import Login from './shared/Login';
 function App() {
   return (
     <Routes>
-      {/* <Route path="/" element={<Login />} /> */}
        <Route path="/" element={<RedirectToDashboard />} /> {/* Root route logic */}
         <Route path="/login" element={<Login />} />
       <Route path="/sign-up" element={<Register />} />

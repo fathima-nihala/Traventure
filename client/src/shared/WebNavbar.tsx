@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import Logo from '../assets/logos/logo-transparent.png'
+import Logo from '../assets/logos/logo-transparent.png';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 
 interface NavItem {
   label: string;
@@ -23,7 +24,6 @@ const WebNavbar: React.FC = () => {
 
   const handleNavClick = (href: string): void => {
     setIsMenuOpen(false);
-    // Handle navigation logic here
     console.log(`Navigating to: ${href}`);
   };
 
@@ -31,32 +31,6 @@ const WebNavbar: React.FC = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <a href='/home' className="flex-shrink-0 flex items-center">
-            {/* <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"> */}
-            <div className="w-12 h-12  rounded-lg flex items-center justify-center">
-              <img src={Logo} alt="" />
-            </div>
-            <span className="ml-3 text-xl font-bold text-[#16baa5]">
-              Tranventure
-            </span>
-          </a>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
-              {navItems.map((item) => (
-                <button
-                  key={item.label}
-                  onClick={() => handleNavClick(item.href)}
-                  className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200 hover:bg-gray-50 rounded-md"
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button
@@ -72,15 +46,49 @@ const WebNavbar: React.FC = () => {
               )}
             </button>
           </div>
+
+          {/* Logo */}
+          <a href="/home" className="flex-shrink-0 flex items-center">
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center">
+              <img src={Logo} alt="Tranventure Logo" className="h-full object-contain" />
+            </div>
+            <span className="ml-3 text-xl font-bold text-[#16baa5]">
+              Tranventure
+            </span>
+          </a>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => handleNavClick(item.href)}
+                className="text-gray-700 hover:text-blue-600 cursor-pointer px-3 py-2 text-sm font-medium transition-colors duration-200 hover:bg-gray-50 rounded-md"
+              >
+                {item.label}
+              </button>
+            ))}
+
+            {/* Login (Desktop) */}
+            <div className="flex items-center space-x-2">
+              <AccountCircleOutlinedIcon className="text-gray-700" />
+              <a
+                href="/login"
+                className="text-gray-700 hover:text-blue-600 text-sm font-medium transition-colors duration-200"
+              >
+                Login
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Mobile Navigation Menu */}
-      <div className={`md:hidden transition-all duration-300 ease-in-out ${
-        isMenuOpen 
-          ? 'max-h-64 opacity-100' 
-          : 'max-h-0 opacity-0 overflow-hidden'
-      }`}>
+      <div
+        className={`md:hidden transition-all duration-300 ease-in-out ${
+          isMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+        }`}
+      >
         <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
           {navItems.map((item) => (
             <button
@@ -91,6 +99,15 @@ const WebNavbar: React.FC = () => {
               {item.label}
             </button>
           ))}
+
+          {/* Login (Mobile) */}
+          <a
+            href="/login"
+            className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50  px-3 py-2 text-base font-medium w-full text-left rounded-md transition-colors duration-200"
+          >
+            <AccountCircleOutlinedIcon />
+            <span>Login</span>
+          </a>
         </div>
       </div>
     </nav>
