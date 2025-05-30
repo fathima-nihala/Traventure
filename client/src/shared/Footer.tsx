@@ -16,14 +16,12 @@ const Footer = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const validateEmail = (email: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
-
-
-
 
   const handleSubscribe = async () => {
     setError('');
@@ -38,6 +36,8 @@ const Footer = () => {
       setError('Please enter a valid email address');
       return;
     }
+
+    setLoading(true);
 
     const templateParams = {
       user_email: email, // must match your template variable
@@ -64,6 +64,9 @@ const Footer = () => {
     } catch (error: unknown) {
       console.error('FAILED...', error);
       setError('Something went wrong. Please try again.');
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -200,6 +203,7 @@ const Footer = () => {
                 <input
                   type="email"
                   value={email}
+                  disabled={loading}
                   onChange={(e) => {
                     setEmail(e.target.value);
                     setError('');
@@ -207,7 +211,7 @@ const Footer = () => {
                   placeholder="Write your email"
                   className={`w-full bg-gray-800 border ${error ? 'border-red-500' : 'border-gray-700'
                     } rounded-lg px-4 py-3 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${error ? 'focus:ring-red-500' : 'focus:ring-teal-500'
-                    } focus:border-transparent`}
+                    } focus:border-transparent  ${loading ? 'cursor-not-allowed opacity-60' : ''}`}
                 />
 
                 <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -219,9 +223,9 @@ const Footer = () => {
 
               <button
                 onClick={handleSubscribe}
-                className="w-full cursor-pointer bg-teal-500 hover:bg-teal-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-              >
-                Subscribe
+                disabled={loading}
+                className={`w-full cursor-pointer bg-teal-500 hover:bg-teal-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors ${loading ? 'cursor-not-allowed opacity-60 hover:bg-teal-500' : ''}`}              >
+                {loading ? 'Loading...' : 'Subscribe'}
               </button>
             </div>
           </div>
