@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Menu, X } from 'lucide-react';
 import Logo from '../assets/logos/logo-transparent.png';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import { RootState, AppDispatch } from '../redux/store'; // Import AppDispatch type
+import { logout } from '../redux/slices/authSlice';
 
 interface NavItem {
   label: string;
@@ -10,7 +13,10 @@ interface NavItem {
 
 const WebNavbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  
+  const dispatch = useDispatch<AppDispatch>(); // Type the dispatch
+
+  // Get auth state from Redux
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
   const navItems: NavItem[] = [
     { label: 'Home', href: '#home' },
@@ -26,6 +32,11 @@ const WebNavbar: React.FC = () => {
   const handleNavClick = (href: string): void => {
     setIsMenuOpen(false);
     console.log(`Navigating to: ${href}`);
+  };
+
+  const handleLogout = (): void => {
+    dispatch(logout()); // This should now work without TypeScript errors
+    setIsMenuOpen(false);
   };
 
   return (
@@ -70,15 +81,28 @@ const WebNavbar: React.FC = () => {
               </button>
             ))}
 
-            {/* Login (Desktop) */}
+            {/* Login/Logout (Desktop) */}
             <div className="flex items-center space-x-2">
-              <AccountCircleOutlinedIcon className="text-gray-700" />
-              <a
-                href="/login"
-                className="text-gray-700 hover:text-blue-600 text-sm font-medium transition-colors duration-200"
-              >
-                Login
-              </a>
+              {isAuthenticated ? (
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={handleLogout}
+                    className="text-gray-700 flex items-center justify-center cursor-pointer hover:text-red-600 text-sm font-medium transition-colors duration-200"
+                  >
+                    <AccountCircleOutlinedIcon />
+
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <a
+                  href="/login"
+                  className="text-gray-700 flex items-center justify-center hover:text-blue-600 text-sm font-medium transition-colors duration-200"
+                >
+                  <AccountCircleOutlinedIcon />
+                  <span>Login</span>
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -86,9 +110,8 @@ const WebNavbar: React.FC = () => {
 
       {/* Mobile Navigation Menu */}
       <div
-        className={`md:hidden transition-all duration-300 ease-in-out ${
-          isMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
-        }`}
+        className={`md:hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+          }`}
       >
         <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
           {navItems.map((item) => (
@@ -101,14 +124,26 @@ const WebNavbar: React.FC = () => {
             </button>
           ))}
 
-          {/* Login (Mobile) */}
-          <a
-            href="/login"
-            className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50  px-3 py-2 text-base font-medium w-full text-left rounded-md transition-colors duration-200"
-          >
-            <AccountCircleOutlinedIcon />
-            <span>Login</span>
-          </a>
+          {/* Login/Logout (Mobile) */}
+          {isAuthenticated ? (
+            <div className="px-3 py-2">
+              <button
+                onClick={handleLogout}
+                className="flex items-center cursor-pointer space-x-2 text-gray-700 hover:text-red-600 hover:bg-gray-50  py-2 text-base font-medium w-full text-left rounded-md transition-colors duration-200"
+              >
+                <AccountCircleOutlinedIcon />
+                <span>Logout</span>
+              </button>
+            </div>
+          ) : (
+            <a
+              href="/login"
+              className="flex items-center cursor-pointer space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 px-3 py-2 text-base font-medium w-full text-left rounded-md transition-colors duration-200"
+            >
+              <AccountCircleOutlinedIcon />
+              <span>Login</span>
+            </a>
+          )}
         </div>
       </div>
     </nav>
