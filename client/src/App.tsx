@@ -11,7 +11,7 @@ function App() {
   return (
     <Routes>
       {/* Root route shows the public home page */}
-      <Route path="/" element={<HomePage />} />
+      <Route path="/*" element={<HomePage />} />
       
       {/* Authentication routes */}
       <Route path="/login" element={<Login />} />

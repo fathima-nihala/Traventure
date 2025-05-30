@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import {
   Mail,
   Phone,
@@ -8,18 +8,62 @@ import {
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
-
-import Logo from '../assets/logos/logo-transparent.png'
+import Logo from '../assets/logos/logo-transparent.png';
+import emailjs from '@emailjs/browser';
 
 
 const Footer = () => {
   const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleSubscribe = () => {
-    // Handle newsletter subscription
-    if (email.trim()) {
-      console.log('Subscribing email:', email);
+  const validateEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+
+
+
+  const handleSubscribe = async () => {
+    setError('');
+    setSuccess('');
+
+    if (!email.trim()) {
+      setError('Email is required');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    const templateParams = {
+      user_email: email, // must match your template variable
+    };
+
+    try {
+      // Send email to Admin
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID!,
+        import.meta.env.VITE_ADMIN_TEMPLATE_ID!, // Admin template ID
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY!
+      );
+
+      // Send confirmation email to User
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID!,
+        import.meta.env.VITE_USER_TEMPLATE_ID!, // User template ID
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY!
+      );
+      setSuccess('Thank you for subscribing!');
       setEmail('');
+    } catch (error: unknown) {
+      console.error('FAILED...', error);
+      setError('Something went wrong. Please try again.');
     }
   };
 
@@ -135,7 +179,7 @@ const Footer = () => {
                   Login
                 </a>
               </li>
-               <li>
+              <li>
                 <a href="#" className="text-gray-300 hover:text-white transition-colors flex items-center group">
                   <ChevronRight className="w-3 h-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                   Register
@@ -156,17 +200,26 @@ const Footer = () => {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setError('');
+                  }}
                   placeholder="Write your email"
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  className={`w-full bg-gray-800 border ${error ? 'border-red-500' : 'border-gray-700'
+                    } rounded-lg px-4 py-3 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${error ? 'focus:ring-red-500' : 'focus:ring-teal-500'
+                    } focus:border-transparent`}
                 />
+
                 <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-400 text-sm">*</span>
               </div>
+              {error && <p className="text-red-400 text-sm">{error}</p>}
+              {success && <p className="text-green-500 mt-3">{success}</p>}
+
 
               <button
                 onClick={handleSubscribe}
-                className="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                className="w-full cursor-pointer bg-teal-500 hover:bg-teal-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
               >
                 Subscribe
               </button>
