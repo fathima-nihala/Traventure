@@ -21,6 +21,3 @@ const HomePage = () => {
 
 export default HomePage;
 
-// service_mshzll8
-// template_324jv6g
-// XWl8BBWA8QdZN2F_d
