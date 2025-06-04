@@ -64,7 +64,8 @@ const GetToKnowUs: React.FC = () => {
   };
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden mt-3">
+    <section className="relative min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-gray-900 overflow-hidden mt-3">
+
       {/* Animated Background */}
       <div className="absolute inset-0">
         {/* Radial gradients using Tailwind's arbitrary values */}
@@ -112,8 +113,8 @@ const GetToKnowUs: React.FC = () => {
             {/* Main Heading with Gradient */}
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
-                <Globe className="w-5 h-5 text-cyan-400" />
-                <span className="text-cyan-400 font-medium">Discover More</span>
+                <Globe className="w-5 h-5 text-green-400" />
+                <span className="text-green-400 font-medium">Discover More</span>
               </div>
               
               <h2 className="text-5xl lg:text-6xl font-bold leading-tight">
@@ -128,7 +129,7 @@ const GetToKnowUs: React.FC = () => {
             {/* Dynamic Description */}
             <div className="space-y-6">
               <p className="text-xl text-gray-300 leading-relaxed">
-                We're not just another travel company. We're <span className="text-cyan-400 font-semibold">experience architects</span>, 
+                We're not just another travel company. We're <span className="text-green-400 font-semibold">experience architects</span>, 
                 crafting journeys that transform ordinary trips into extraordinary adventures.
               </p>
               
@@ -147,14 +148,14 @@ const GetToKnowUs: React.FC = () => {
                   key={index}
                   className={`p-4 rounded-xl cursor-pointer transition-all duration-500 border ${
                     activeCard === index
-                      ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border-cyan-400/50 shadow-lg shadow-cyan-500/25'
+                      ? 'bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 border-cyan-400/50 shadow-lg shadow-cyan-500/25'
                       : 'bg-white/5 border-white/10 hover:bg-white/10'
                   }`}
                   onClick={() => setActiveCard(index)}
                 >
                   <div className="flex items-center gap-4">
                     <div className={`p-3 rounded-lg transition-all duration-300 ${
-                      activeCard === index ? 'bg-cyan-400 text-white' : 'bg-white/10 text-cyan-400'
+                      activeCard === index ? 'bg-cyan-400 text-white' : 'bg-white/10 text-green-400'
                     }`}>
                       {value.icon}
                     </div>
@@ -188,10 +189,10 @@ const GetToKnowUs: React.FC = () => {
               {/* Layered Visual Elements */}
               <div className="absolute inset-0">
                 {/* Background Glow */}
-                <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-gradient-to-r from-cyan-400/30 to-purple-500/30 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+                <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-gradient-to-r from-cyan-400/30 to-emerald-500/30 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2 animate-pulse" />
                 
                 {/* Main Image Container */}
-                <div className="absolute top-10 left-10 w-72 h-96 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-[3rem] p-1 shadow-2xl group-hover:rotate-2 transition-transform duration-700">
+                <div className="absolute top-10 left-10 w-72 h-96 bg-gradient-to-br from-cyan-400 to-green-600 rounded-[3rem] p-1 shadow-2xl group-hover:rotate-2 transition-transform duration-700">
                   <div className="w-full h-full bg-slate-800 rounded-[2.8rem] overflow-hidden relative">
                     {/* Your team image */}
                     <img
@@ -208,7 +209,7 @@ const GetToKnowUs: React.FC = () => {
                 </div>
 
                 {/* Secondary Visual Element */}
-                <div className="absolute bottom-16 right-8 w-48 h-32 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl shadow-xl group-hover:-rotate-3 transition-transform duration-700 flex items-center justify-center">
+                <div className="absolute bottom-16 right-8 w-48 h-32 bg-gradient-to-r from-emerald-500 to-lime-500 rounded-3xl shadow-xl group-hover:-rotate-3 transition-transform duration-700 flex items-center justify-center">
                   <div className="text-center text-white">
                     <Users className="w-8 h-8 mx-auto mb-2" />
                     <p className="font-bold text-lg">1000+</p>
@@ -224,7 +225,7 @@ const GetToKnowUs: React.FC = () => {
                   }}
                 >
                   <div className="text-center text-white">
-                    <MapPin className="w-6 h-6 mx-auto mb-2 text-cyan-400" />
+                    <MapPin className="w-6 h-6 mx-auto mb-2 text-green-400" />
                     <p className="font-bold">50+</p>
                     <p className="text-sm opacity-80">Destinations</p>
                   </div>
@@ -234,9 +235,10 @@ const GetToKnowUs: React.FC = () => {
 
             {/* Call to Action Button */}
             <div className="mt-8 text-center">
-              <button className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl font-semibold text-white shadow-xl hover:shadow-2xl hover:shadow-cyan-500/25 transition-all duration-300 hover:scale-105 overflow-hidden">
+              <button className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-green-600
+ rounded-2xl font-semibold text-white shadow-xl hover:shadow-2xl hover:shadow-cyan-500/25 transition-all duration-300 hover:scale-105 overflow-hidden">
                 <span className="relative z-10">Start Your Journey</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-emerald-500 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </button>
             </div>
           </div>
