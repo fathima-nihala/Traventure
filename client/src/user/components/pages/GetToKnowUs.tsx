@@ -1,58 +1,3 @@
-// import teamImage from '../../../assets/home/gettoknow.jpg'; 
-
-// const GetToKnowUs = () => {
-//      return (
-//     <section className="relative bg-white py-16 px-6 md:px-20">
-//       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
-        
-//         {/* Left Side - Creative Image Stack */}
-//         <div className="relative w-full lg:w-1/2 flex items-center justify-center">
-//           {/* Background Dot Pattern or Shape */}
-//           <div className="absolute -top-10 -left-10 w-40 h-40 bg-gradient-to-br from-cyan-100 to-white rounded-full blur-2xl opacity-30 z-0" />
-          
-//           {/* Vertical Image Stack */}
-//           <div className="flex flex-col gap-6 relative z-10">
-//             <img
-//               src={teamImage}
-//               alt="Viewpoint"
-//               className="w-60 h-96 object-cover rounded-[120px] shadow-xl"
-//             />
-//             <div className="relative">
-//               <img
-//                 src={teamImage}
-//                 alt="Explorer"
-//                 className="w-48 h-64 object-cover rounded-[100px] shadow-xl"
-//               />
-//               <div className="absolute -top-6 -left-6 bg-teal-600 text-white text-xl px-4 py-2 rounded-full shadow-lg font-bold">
-//                 Let's Explore
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Right Side - Text Content */}
-//         <div className="w-full lg:w-1/2">
-//           <h2 className="text-4xl font-bold text-gray-800 mb-4">
-//             Get to Know Us
-//           </h2>
-//           <p className="text-lg text-gray-600 leading-relaxed mb-4">
-//             Traventure is more than just travel — it's your gateway to discovery.
-//             We help you unlock unforgettable experiences and meaningful journeys around the world.
-//           </p>
-//           <p className="text-lg text-gray-600 leading-relaxed">
-//             Our team of explorers, planners, and dreamers is passionate about crafting unique
-//             adventures tailored to your vibe. Let us take you beyond borders and into the heart
-//             of discovery.
-//           </p>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default GetToKnowUs;
-
-
 import React, { useState, useEffect } from 'react';
 import { MapPin, Compass, Users, Heart, Camera, Globe } from 'lucide-react';
 import teamImage from '../../../assets/home/gettoknow.jpg';
@@ -119,7 +64,7 @@ const GetToKnowUs: React.FC = () => {
   };
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
+    <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden mt-3">
       {/* Animated Background */}
       <div className="absolute inset-0">
         {/* Radial gradients using Tailwind's arbitrary values */}
