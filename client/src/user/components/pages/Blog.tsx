@@ -1,5 +1,7 @@
 import React from 'react';
-import { Calendar, User, ArrowRight, Clock, MapPin, Heart, Bookmark } from 'lucide-react';
+import { Calendar, User, ArrowRight, Clock, MapPin, Heart, Bookmark, AlertCircle, CheckCircle } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+
 
 interface BlogPost {
   id: number;
@@ -95,8 +97,15 @@ const Blog: React.FC = () => {
   const [likedPosts, setLikedPosts] = React.useState(new Set());
   const [bookmarkedPosts, setBookmarkedPosts] = React.useState(new Set());
 
-  const filteredPosts = selectedCategory === "All" 
-    ? blogPosts 
+  // Newsletter state
+  const [email, setEmail] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState('');
+  const [success, setSuccess] = React.useState('');
+
+
+  const filteredPosts = selectedCategory === "All"
+    ? blogPosts
     : blogPosts.filter(post => post.category === selectedCategory);
 
   const toggleLike = (postId: number): void => {
@@ -121,6 +130,60 @@ const Blog: React.FC = () => {
       }
       return newSet;
     });
+  };
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Updated handleSubmit function for your Blog component
+  // Replace the existing handleSubscribe function with this:
+
+  const handleSubscribe = async () => {
+    setError('');
+    setSuccess('');
+
+    if (!email.trim()) {
+      setError('Email is required');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    setLoading(true);
+
+    const templateParams = {
+      user_email: email,
+      subscription_source: 'Blog Newsletter' // Optional: to distinguish from footer
+    };
+
+    try {
+      // Send only ONE email (to admin) - just like your footer
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID!,
+        import.meta.env.VITE_ADMIN_TEMPLATE_ID!, // Use same template as footer
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY!
+      );
+
+      setSuccess('Thank you for subscribing! We\'ll keep you updated with amazing travel stories.');
+      setEmail('');
+    } catch (error: unknown) {
+      console.error('FAILED...', error);
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSubscribe();
+    }
   };
 
   return (
@@ -150,11 +213,10 @@ const Blog: React.FC = () => {
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
-                  selectedCategory === category
-                    ? 'bg-gradient-to-r from-[#16baa5] to-[#0aa58d] text-white shadow-lg shadow-blue-500/25 cursor-pointer'
-                    : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg border border-gray-200 cursor-pointer'
-                }`}
+                className={`px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${selectedCategory === category
+                  ? 'bg-gradient-to-r from-[#16baa5] to-[#0aa58d] text-white shadow-lg shadow-blue-500/25 cursor-pointer'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg border border-gray-200 cursor-pointer'
+                  }`}
               >
                 {category}
               </button>
@@ -243,42 +305,40 @@ const Blog: React.FC = () => {
                 <div className="absolute top-4 right-4 flex gap-2">
                   <button
                     onClick={() => toggleLike(post.id)}
-                    className={`p-2 rounded-full backdrop-blur-sm transition-all duration-300 ${
-                      likedPosts.has(post.id)
-                        ? 'bg-red-500 text-white'
-                        : 'bg-white/90 text-gray-700 hover:bg-red-500 hover:text-white'
-                    }`}
+                    className={`p-2 rounded-full backdrop-blur-sm transition-all duration-300 ${likedPosts.has(post.id)
+                      ? 'bg-red-500 text-white'
+                      : 'bg-white/90 text-gray-700 hover:bg-red-500 hover:text-white'
+                      }`}
                   >
                     <Heart className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => toggleBookmark(post.id)}
-                    className={`p-2 rounded-full backdrop-blur-sm transition-all duration-300 ${
-                      bookmarkedPosts.has(post.id)
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-white/90 text-gray-700 hover:bg-blue-500 hover:text-white'
-                    }`}
+                    className={`p-2 rounded-full backdrop-blur-sm transition-all duration-300 ${bookmarkedPosts.has(post.id)
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-white/90 text-gray-700 hover:bg-blue-500 hover:text-white'
+                      }`}
                   >
                     <Bookmark className="w-4 h-4" />
                   </button>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
-              
+
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-3 text-sm text-gray-500">
                   <MapPin className="w-4 h-4" />
                   {post.location}
                 </div>
-                
+
                 <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
                   {post.title}
                 </h3>
-                
+
                 <p className="text-gray-600 mb-4 line-clamp-3 leading-relaxed">
                   {post.excerpt}
                 </p>
-                
+
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                   <div className="flex items-center gap-4 text-sm text-gray-500">
                     <div className="flex items-center">
@@ -301,7 +361,7 @@ const Blog: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <a href='https://www.instagram.com/sha_ni_hala_' className="w-full mt-4 bg-gradient-to-r from-[#16baa5] to-[#0aa58d] text-white cursor-pointer py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2">
                   Read Full Story
                   <ArrowRight className="w-4 h-4" />
@@ -321,15 +381,59 @@ const Blog: React.FC = () => {
             Subscribe to our newsletter and get the latest travel stories, tips, and exclusive destination guides delivered to your inbox.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
+            {/* <input
               type="email"
               placeholder="Enter your email"
               className="flex-1 px-6 py-4 rounded-xl border-none focus:outline-none focus:ring-4 focus:ring-white/25 text-gray-800"
+            /> */}
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Enter your email"
+              disabled={loading}
+              className={`w-full px-6 py-4 rounded-xl border-none focus:outline-none focus:ring-4 focus:ring-white/25 text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ${error ? 'ring-2 ring-red-400' : success ? 'ring-2 ring-green-400' : ''
+                }`}
             />
-            <button className="bg-white text-gray-800 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-colors duration-300 whitespace-nowrap">
+            {/* <button className="bg-white text-gray-800 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-colors duration-300 whitespace-nowrap">
               Subscribe Now
+            </button> */}
+            <button
+              onClick={handleSubscribe}
+              disabled={loading}
+              className="bg-white text-gray-800 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-gray-800 border-t-transparent rounded-full animate-spin"></div>
+                  Subscribing...
+                </>
+              ) : (
+                <>
+                  Subscribe Now
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
+
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 flex items-center justify-center gap-2 text-red-200 bg-red-500/20 px-4 py-2 rounded-lg">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span className="text-sm">{error}</span>
+            </div>
+          )}
+
+          {/* Success Message */}
+          {success && (
+            <div className="mt-4 flex items-center justify-center gap-2 text-green-200 bg-green-500/20 px-4 py-2 rounded-lg">
+              <CheckCircle className="w-4 h-4 flex-shrink-0" />
+              <span className="text-sm">{success}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
