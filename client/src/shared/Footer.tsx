@@ -224,7 +224,7 @@ const Footer = () => {
               <button
                 onClick={handleSubscribe}
                 disabled={loading}
-                className={`w-full cursor-pointer bg-teal-500 hover:bg-teal-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors ${loading ? 'cursor-not-allowed opacity-60 hover:bg-teal-500' : ''}`}              >
+                className={`w-full cursor-pointer bg-gradient-to-r from-[#16baa5] to-[#0aa58d] hover:from-[#0aa58d] hover:to-[#0a8874] text-white font-semibold py-3 px-6 rounded-lg transition-colors ${loading ? 'cursor-not-allowed opacity-60 hover:bg-teal-500' : ''}`}              >
                 {loading ? 'Loading...' : 'Subscribe'}
               </button>
             </div>

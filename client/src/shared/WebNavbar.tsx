@@ -5,6 +5,7 @@ import Logo from '../assets/logos/logo-transparent.png';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import { RootState, AppDispatch } from '../redux/store'; // Import AppDispatch type
 import { logout } from '../redux/slices/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 interface NavItem {
   label: string;
@@ -14,24 +15,34 @@ interface NavItem {
 const WebNavbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>(); // Type the dispatch
+  const navigate = useNavigate();
 
   // Get auth state from Redux
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   const navItems: NavItem[] = [
-    { label: 'Home', href: '#home' },
+    { label: 'Home', href: '/' },
     { label: 'Packages', href: '#packages' },
-    { label: 'Blog', href: '#blog' },
-    { label: 'Contact Us', href: '#contact' }
+    { label: 'Blog', href: '/blog' },
+    { label: 'Contact Us', href: '/contact' }
   ];
 
   const toggleMenu = (): void => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleNavClick = (href: string): void => {
+
+   const handleNavClick = (href: string): void => {
     setIsMenuOpen(false);
-    console.log(`Navigating to: ${href}`);
+    if (href.startsWith('#')) {
+      // For in-page anchors like #packages
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      navigate(href); // ✅ Use navigate for routing
+    }
   };
 
   const handleLogout = (): void => {
@@ -72,13 +83,13 @@ const WebNavbar: React.FC = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <button
+              <a
                 key={item.label}
                 onClick={() => handleNavClick(item.href)}
                 className="text-gray-700 hover:text-blue-600 cursor-pointer px-3 py-2 text-sm font-medium transition-colors duration-200 hover:bg-gray-50 rounded-md"
               >
                 {item.label}
-              </button>
+              </a>
             ))}
 
             {/* Login/Logout (Desktop) */}
