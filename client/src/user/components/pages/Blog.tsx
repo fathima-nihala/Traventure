@@ -126,7 +126,7 @@ const Blog: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700">
+      <div className="relative overflow-hidden bg-gradient-to-r from-[#16baa5] via-[#0aa58d] to-[#087c6b]">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -152,7 +152,7 @@ const Blog: React.FC = () => {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
                   selectedCategory === category
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25 cursor-pointer'
+                    ? 'bg-gradient-to-r from-[#16baa5] to-[#0aa58d] text-white shadow-lg shadow-blue-500/25 cursor-pointer'
                     : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg border border-gray-200 cursor-pointer'
                 }`}
               >
@@ -212,7 +212,7 @@ const Blog: React.FC = () => {
                       {filteredPosts[0]?.readTime}
                     </div>
                   </div>
-                  {/* <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
+                  {/* <button className="bg-gradient-to-r from-[#16baa5] to-[#0aa58d] text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
                     Read More
                     <ArrowRight className="w-4 h-4" />
                   </button> */}
@@ -302,7 +302,7 @@ const Blog: React.FC = () => {
                   </div>
                 </div>
                 
-                <a href='https://www.instagram.com/sha_ni_hala_' className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white cursor-pointer py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2">
+                <a href='https://www.instagram.com/sha_ni_hala_' className="w-full mt-4 bg-gradient-to-r from-[#16baa5] to-[#0aa58d] text-white cursor-pointer py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2">
                   Read Full Story
                   <ArrowRight className="w-4 h-4" />
                 </a>
@@ -313,7 +313,7 @@ const Blog: React.FC = () => {
 
 
         {/* Newsletter Section */}
-        <div className="mt-20 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 rounded-3xl p-8 lg:p-12 text-center">
+        <div className="mt-20 bg-gradient-to-r from-[#16baa5] via-[#0aa58d] to-[#087c6b] rounded-3xl p-8 lg:p-12 text-center">
           <h3 className="text-3xl lg:text-4xl font-bold text-white mb-4">
             Never Miss an Adventure
           </h3>
