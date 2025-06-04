@@ -9,22 +9,22 @@ interface Feature {
 
 const features: Feature[] = [
   {
-    icon: <Globe className="h-8 w-8 text-blue-600" />,
+    icon: <Globe className="h-8 w-8 text-green-600" />,
     title: 'Worldwide Destinations',
     description: 'Explore curated trips to breathtaking places across the globe.',
   },
   {
-    icon: <Clock className="h-8 w-8 text-blue-600" />,
+    icon: <Clock className="h-8 w-8 text-green-600" />,
     title: '24/7 Support',
     description: 'We’re always here to help you during your journey.',
   },
   {
-    icon: <ThumbsUp className="h-8 w-8 text-blue-600" />,
+    icon: <ThumbsUp className="h-8 w-8 text-green-600" />,
     title: 'Trusted by Thousands',
     description: 'Thousands of happy travelers trust us every year.',
   },
   {
-    icon: <Users className="h-8 w-8 text-blue-600" />,
+    icon: <Users className="h-8 w-8 text-green-600" />,
     title: 'Personalized Trips',
     description: 'Tailor-made travel experiences that suit your style.',
   },
