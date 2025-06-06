@@ -3,6 +3,7 @@ import WebNavbar from '../../shared/WebNavbar';
 import { lazy, Suspense } from 'react';
 import Footer from '../../shared/Footer';
 import Blog from './pages/Blog';
+import ContactUs from './pages/ContactUs';
 
 const Home = lazy(() => import('./pages/Home'));
 
@@ -14,6 +15,7 @@ const HomePage = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path='/blog' element={<Blog/>}/>
+          <Route path='/contact' element={<ContactUs/>}/>
         </Routes>
       </Suspense>
       <Footer />
