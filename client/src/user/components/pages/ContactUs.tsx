@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, } from 'lucide-react';
 
 const ContactUs: React.FC = () => {
   return (
@@ -12,38 +12,53 @@ const ContactUs: React.FC = () => {
 
       <div className="grid md:grid-cols-2 gap-12">
         {/* Contact Form */}
-        <form action="https://usebasin.com/f/01b2ed27c151"  // replace with your Basin endpoint
-          method="POST" className="bg-gray-50 shadow-lg rounded-xl p-8 space-y-6">
+
+        <form
+          action="https://usebasin.com/f/01b2ed27c151"
+          method="POST"
+          className="bg-gray-50 shadow-lg rounded-xl p-8 space-y-6"
+        >
           <div>
             <label className="block text-sm font-medium text-gray-700">Full Name</label>
             <input
               type="text"
+              name="name"
+              required
               placeholder="Your Name"
-              className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full mt-1 border border-gray-300 rounded-md p-2"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Email</label>
             <input
               type="email"
+              name="email"
+              required
               placeholder="you@example.com"
-              className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+              className="w-full mt-1 border border-gray-300 rounded-md p-2"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Message</label>
             <textarea
+              name="message"
+              required
               placeholder="Your message..."
               rows={5}
-              className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full mt-1 border border-gray-300 rounded-md p-2"
             ></textarea>
           </div>
           <button
             type="submit"
-            className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-2 cursor-pointer rounded-md hover:bg-green-700 transition-all duration-300">
-            <Send size={18} /> Send Message
+            className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-all duration-300"
+          >
+            Send Message
           </button>
         </form>
+
+
+
 
         {/* Contact Info */}
         <div className="flex flex-col gap-6 justify-center">
