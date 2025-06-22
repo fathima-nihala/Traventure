@@ -24,7 +24,6 @@ const WebNavbar: React.FC = () => {
   const { packages } = useSelector((state: RootState) => state.package);
 
   const navItems: NavItem[] = [
-    { label: 'Home', href: '/' },
     { label: 'Blog', href: '/blog' },
     { label: 'Contact Us', href: '/contact' },
     { label: 'Remaining', href: '/remaining' }
@@ -86,6 +85,15 @@ const WebNavbar: React.FC = () => {
 
           {/* Desktop nav */}
           <div className="hidden lg:flex items-center space-x-6">
+
+             {/* Home */}
+            <button
+              onClick={() => handleNavClick('/')}
+              className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-50"
+            >
+              Home
+            </button>
+
             {/* Packages Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
@@ -156,6 +164,15 @@ const WebNavbar: React.FC = () => {
         }`}
       >
         <div className="px-4 py-3 space-y-2 bg-white border-t">
+
+           {/* Home */}
+            <button
+              onClick={() => handleNavClick('/')}
+              className="text-gray-700 hover:text-blue-600  text-sm font-medium rounded-md hover:bg-gray-50"
+            >
+              Home
+            </button>
+
           {/* Packages */}
           <button
             onClick={handlePackagesClick}
