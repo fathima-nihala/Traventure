@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Menu, X } from 'lucide-react';
 import Logo from '../assets/logos/logo-transparent.png';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import { RootState, AppDispatch } from '../redux/store'; // Import AppDispatch type
+import { RootState, AppDispatch } from '../redux/store';
 import { logout } from '../redux/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { getPackages } from '../redux/slices/packageSlice';
 
 interface NavItem {
   label: string;
@@ -13,143 +14,201 @@ interface NavItem {
 }
 
 const WebNavbar: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const dispatch = useDispatch<AppDispatch>(); // Type the dispatch
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showPackageDropdown, setShowPackageDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  // Get auth state from Redux
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { packages } = useSelector((state: RootState) => state.package);
 
   const navItems: NavItem[] = [
     { label: 'Home', href: '/' },
-    { label: 'Packages', href: '#packages' },
     { label: 'Blog', href: '/blog' },
-    { label: 'Contact Us', href: '/contact' }
+    { label: 'Contact Us', href: '/contact' },
+    { label: 'Remaining', href: '/remaining' }
   ];
 
-  const toggleMenu = (): void => {
-    setIsMenuOpen(!isMenuOpen);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const handleNavClick = (href: string) => {
+    setIsMenuOpen(false);
+    setShowPackageDropdown(false);
+    navigate(href);
   };
 
-
-   const handleNavClick = (href: string): void => {
+  const handleLogout = () => {
+    dispatch(logout());
     setIsMenuOpen(false);
-    if (href.startsWith('#')) {
-      // For in-page anchors like #packages
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+    setShowPackageDropdown(false);
+  };
+
+  const handlePackagesClick = () => {
+    setShowPackageDropdown((prev) => !prev);
+    if (!packages.length) dispatch(getPackages({}));
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowPackageDropdown(false);
       }
-    } else {
-      navigate(href); // ✅ Use navigate for routing
-    }
-  };
+    };
 
-  const handleLogout = (): void => {
-    dispatch(logout()); // This should now work without TypeScript errors
-    setIsMenuOpen(false);
-  };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Mobile menu button */}
-          <div className="md:hidden">
+          {/* Mobile toggle */}
+          <div className="lg:hidden">
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors duration-200"
-              aria-expanded="false"
+              className="p-2 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-md"
             >
-              <span className="sr-only">Open main menu</span>
-              {isMenuOpen ? (
-                <X className="block h-6 w-6" aria-hidden="true" />
-              ) : (
-                <Menu className="block h-6 w-6" aria-hidden="true" />
-              )}
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
 
           {/* Logo */}
-          <a href="/" className="flex-shrink-0 flex items-center">
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center">
-              <img src={Logo} alt="Tranventure Logo" className="h-full object-contain" />
-            </div>
-            <span className="ml-3 text-xl font-bold text-[#16baa5]">
-              Tranventure
-            </span>
+          <a href="/" className="flex items-center">
+            <img src={Logo} alt="Logo" className="h-10 w-10" />
+            <span className="ml-2 text-xl font-bold text-[#16baa5]">Tranventure</span>
           </a>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <a
-                key={item.label}
-                onClick={() => handleNavClick(item.href)}
-                className="text-gray-700 hover:text-blue-600 cursor-pointer px-3 py-2 text-sm font-medium transition-colors duration-200 hover:bg-gray-50 rounded-md"
+          {/* Desktop nav */}
+          <div className="hidden lg:flex items-center space-x-6">
+            {/* Packages Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={handlePackagesClick}
+                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-50"
               >
-                {item.label}
-              </a>
-            ))}
-
-            {/* Login/Logout (Desktop) */}
-            <div className="flex items-center space-x-2">
-              {isAuthenticated ? (
-                <div className="flex items-center space-x-3">
-                  <button
-                    onClick={handleLogout}
-                    className="text-gray-700 flex items-center justify-center cursor-pointer hover:text-red-600 text-sm font-medium transition-colors duration-200"
-                  >
-                    <AccountCircleOutlinedIcon />
-
-                    Logout
-                  </button>
+                Packages
+              </button>
+              {showPackageDropdown && (
+                <div className="absolute left-0 mt-2 w-52 bg-white border rounded shadow z-50">
+                  {packages.length > 0 ? (
+                    packages.map((pkg) => (
+                      <button
+                        key={pkg._id}
+                        onClick={() => {
+                          navigate(`/packages/${pkg._id}`);
+                          setShowPackageDropdown(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        {pkg.toLocation}
+                      </button>
+                    ))
+                  ) : (
+                    <p className="px-4 py-2 text-gray-500">No packages found</p>
+                  )}
                 </div>
-              ) : (
-                <a
-                  href="/login"
-                  className="text-gray-700 flex items-center justify-center hover:text-blue-600 text-sm font-medium transition-colors duration-200"
-                >
-                  <AccountCircleOutlinedIcon />
-                  <span>Login</span>
-                </a>
               )}
             </div>
+
+            {/* Other links */}
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => handleNavClick(item.href)}
+                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-50"
+              >
+                {item.label}
+              </button>
+            ))}
+
+            {/* Auth */}
+            {isAuthenticated ? (
+              <button
+                onClick={handleLogout}
+                className="text-gray-700 flex items-center hover:text-red-600"
+              >
+                <AccountCircleOutlinedIcon className="mr-1" />
+                Logout
+              </button>
+            ) : (
+              <a
+                href="/login"
+                className="text-gray-700 flex items-center hover:text-blue-600"
+              >
+                <AccountCircleOutlinedIcon className="mr-1" />
+                Login
+              </a>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Mobile Navigation Menu */}
+      {/* Mobile menu */}
       <div
-        className={`md:hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
-          }`}
+        className={`lg:hidden transition-all duration-300 overflow-hidden ${
+          isMenuOpen ? 'max-h-96' : 'max-h-0 opacity-0'
+        }`}
       >
-        <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
+        <div className="px-4 py-3 space-y-2 bg-white border-t">
+          {/* Packages */}
+          <button
+            onClick={handlePackagesClick}
+            className="w-full text-left text-gray-700 hover:text-blue-600 text-base font-medium"
+          >
+            Packages
+          </button>
+          {showPackageDropdown && (
+            <div className="ml-4 space-y-1">
+              {packages.length > 0 ? (
+                packages.map((pkg) => (
+                  <button
+                    key={pkg._id}
+                    onClick={() => {
+                      navigate(`/packages/${pkg._id}`);
+                      setShowPackageDropdown(false);
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-1 text-sm text-gray-600 hover:bg-gray-100"
+                  >
+                    {pkg.toLocation}
+                  </button>
+                ))
+              ) : (
+                <p className="px-4 py-2 text-gray-500">No packages found</p>
+              )}
+            </div>
+          )}
+
+          {/* Other links */}
           {navItems.map((item) => (
             <button
               key={item.label}
               onClick={() => handleNavClick(item.href)}
-              className="text-gray-700 hover:text-blue-600 hover:bg-gray-50 block px-3 py-2 text-base font-medium w-full text-left rounded-md transition-colors duration-200"
+              className="w-full text-left text-gray-700 hover:text-blue-600 text-base font-medium"
             >
               {item.label}
             </button>
           ))}
 
-          {/* Login/Logout (Mobile) */}
+          {/* Auth mobile */}
           {isAuthenticated ? (
-            <div className="px-3 py-2">
-              <button
-                onClick={handleLogout}
-                className="flex items-center cursor-pointer space-x-2 text-gray-700 hover:text-red-600 hover:bg-gray-50  py-2 text-base font-medium w-full text-left rounded-md transition-colors duration-200"
-              >
-                <AccountCircleOutlinedIcon />
-                <span>Logout</span>
-              </button>
-            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 text-gray-700 hover:text-red-600"
+            >
+              <AccountCircleOutlinedIcon />
+              <span>Logout</span>
+            </button>
           ) : (
             <a
               href="/login"
-              className="flex items-center cursor-pointer space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 px-3 py-2 text-base font-medium w-full text-left rounded-md transition-colors duration-200"
+              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600"
             >
               <AccountCircleOutlinedIcon />
               <span>Login</span>

@@ -7,7 +7,7 @@ const { packageUpload } = require('../middleware/multer');
 
 router.route('/create').post(isAuthenticated, isAdmin, packageUpload.array('images',5), createPackage);
 router.route('/analytics').get(isAuthenticated, isAdmin, getPackageAnalytics);
-router.route('/').get(isAuthenticated, getPackages);
+router.route('/').get(getPackages);
 router.route('/:id').put(isAuthenticated, isAdmin, packageUpload.array('images',5), updatePackage);
 router.route('/:id').delete(isAuthenticated, isAdmin, deletePackage);
 router.route('/:id').get(isAuthenticated, getPackageById);
