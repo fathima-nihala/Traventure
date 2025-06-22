@@ -89,7 +89,7 @@ const WebNavbar: React.FC = () => {
              {/* Home */}
             <button
               onClick={() => handleNavClick('/')}
-              className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-50"
+              className="text-gray-700 cursor-pointer hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-50"
             >
               Home
             </button>
@@ -98,7 +98,7 @@ const WebNavbar: React.FC = () => {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={handlePackagesClick}
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-50"
+                className="text-gray-700 cursor-pointer hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-50"
               >
                 Packages
               </button>
@@ -112,7 +112,7 @@ const WebNavbar: React.FC = () => {
                           navigate(`/packages/${pkg._id}`);
                           setShowPackageDropdown(false);
                         }}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="w-full cursor-pointer text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         {pkg.toLocation}
                       </button>
@@ -129,7 +129,7 @@ const WebNavbar: React.FC = () => {
               <button
                 key={item.label}
                 onClick={() => handleNavClick(item.href)}
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-50"
+                className="text-gray-700 cursor-pointer hover:text-blue-600 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-50"
               >
                 {item.label}
               </button>
@@ -168,7 +168,7 @@ const WebNavbar: React.FC = () => {
            {/* Home */}
             <button
               onClick={() => handleNavClick('/')}
-              className="text-gray-700 hover:text-blue-600  text-sm font-medium rounded-md hover:bg-gray-50"
+              className="text-gray-700 cursor-pointer hover:text-blue-600  text-sm font-medium rounded-md hover:bg-gray-50"
             >
               Home
             </button>
@@ -176,7 +176,7 @@ const WebNavbar: React.FC = () => {
           {/* Packages */}
           <button
             onClick={handlePackagesClick}
-            className="w-full text-left text-gray-700 hover:text-blue-600 text-base font-medium"
+            className="w-full text-left cursor-pointer text-gray-700 hover:text-blue-600 text-base font-medium"
           >
             Packages
           </button>
@@ -191,7 +191,7 @@ const WebNavbar: React.FC = () => {
                       setShowPackageDropdown(false);
                       setIsMenuOpen(false);
                     }}
-                    className="w-full text-left px-4 py-1 text-sm text-gray-600 hover:bg-gray-100"
+                    className="w-full cursor-pointer text-left px-4 py-1 text-sm text-gray-600 hover:bg-gray-100"
                   >
                     {pkg.toLocation}
                   </button>
