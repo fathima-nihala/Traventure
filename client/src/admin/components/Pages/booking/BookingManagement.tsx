@@ -15,9 +15,6 @@ import {
   type Booking // Import the Booking type from the slice
 } from '../../../../redux/slices/bookingSlice';
 
-// Remove the local Booking interface since we're using the one from the slice
-// The Redux slice Booking interface already has the correct types
-
 interface TopUser {
   _id: string;
   name: string;
@@ -63,13 +60,25 @@ const BookingManagement: React.FC = () => {
     booking?.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     booking.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     booking.package?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.package?.location?.toLowerCase().includes(searchTerm.toLowerCase())
+    booking.package?.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    booking.package?.fromLocation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    booking.package?.toLocation?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Get booking status based on package dates
+  // Get booking status - FIXED VERSION
   const getBookingStatus = (booking: Booking): string => {
+    // First check if there's an explicit booking status
+    if (booking.status) {
+      return booking.status;
+    }
+    
+    // If bookingStatus exists, use that
+    if (booking.bookingStatus) {
+      return booking.bookingStatus;
+    }
+    
+    // Fallback to date-based calculation only if no explicit status
     const today = new Date();
-    // Handle both Date and string types for dates
     const startDate = new Date(booking.package.startDate);
     const endDate = new Date(booking.package.endDate);
     
@@ -79,12 +88,14 @@ const BookingManagement: React.FC = () => {
     return 'unknown';
   };
 
-  // Get status badge color
+  // Get status badge color - UPDATED VERSION
   const getStatusBadgeColor = (status: string): string => {
     switch (status) {
       case 'completed': return 'bg-green-100 text-green-800';
       case 'active': return 'bg-blue-100 text-blue-800';
       case 'upcoming': return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      case 'accepted': return 'bg-green-100 text-green-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -102,7 +113,7 @@ const BookingManagement: React.FC = () => {
   // Open status modal
   const openStatusModal = (booking: Booking): void => {
     setSelectedBooking(booking);
-    setNewStatus(booking.status || getBookingStatus(booking));
+    setNewStatus(booking.status || booking.bookingStatus || getBookingStatus(booking));
     setShowStatusModal(true);
   };
 
@@ -166,22 +177,26 @@ const BookingManagement: React.FC = () => {
             </button>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">{analytics.totalBookings}</div>
               <div className="text-sm text-gray-600">Total Bookings</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{analytics.statusCounts.completed}</div>
+              <div className="text-2xl font-bold text-green-600">{analytics.statusCounts.completed || 0}</div>
               <div className="text-sm text-gray-600">Completed</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{analytics.statusCounts.active}</div>
+              <div className="text-2xl font-bold text-blue-600">{analytics.statusCounts.active || 0}</div>
               <div className="text-sm text-gray-600">Active</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-600">{analytics.statusCounts.upcoming}</div>
+              <div className="text-2xl font-bold text-yellow-600">{analytics.statusCounts.upcoming || 0}</div>
               <div className="text-sm text-gray-600">Upcoming</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-600">{analytics.statusCounts.cancelled || 0}</div>
+              <div className="text-sm text-gray-600">Cancelled</div>
             </div>
           </div>
 
@@ -229,6 +244,8 @@ const BookingManagement: React.FC = () => {
               <option value="upcoming">Upcoming</option>
               <option value="active">Active</option>
               <option value="completed">Completed</option>
+              <option value="accepted">Accepted</option>
+              <option value="cancelled">Cancelled</option>
             </select>
             <button
               onClick={() => dispatch(getAllBookings({ status: statusFilter }))}
@@ -263,7 +280,9 @@ const BookingManagement: React.FC = () => {
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <h3 className="text-xl font-bold text-gray-900">{booking.package.name}</h3>
+                          <h3 className="text-xl font-bold text-gray-900">
+                            {booking.package.name || `${booking.package.fromLocation} to ${booking.package.toLocation}`}
+                          </h3>
                           <p className="text-gray-600">Booking ID: {booking._id.slice(-8)}</p>
                         </div>
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeColor(status)}`}>
@@ -280,10 +299,10 @@ const BookingManagement: React.FC = () => {
                             <span className="font-medium">Email:</span> {booking.user?.email}
                           </p>
                           <p className="text-gray-600 mb-1">
-                            <span className="font-medium">Location:</span> {booking.package.location}
+                            <span className="font-medium">Route:</span> {booking.package.fromLocation} → {booking.package.toLocation}
                           </p>
                           <p className="text-gray-600">
-                            <span className="font-medium">Route:</span> {booking.package.fromLocation} → {booking.package.toLocation}
+                            <span className="font-medium">Description:</span> {booking.package.description}
                           </p>
                         </div>
                         <div>
@@ -330,12 +349,14 @@ const BookingManagement: React.FC = () => {
 
       {/* Status Update Modal */}
       {showStatusModal && selectedBooking && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 backdrop-blur-lg bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Update Booking Status</h3>
             
             <div className="mb-4">
-              <p className="text-sm text-gray-600 mb-2">Booking: {selectedBooking.package.name}</p>
+              <p className="text-sm text-gray-600 mb-2">
+                Booking: {selectedBooking.package.name || `${selectedBooking.package.fromLocation} to ${selectedBooking.package.toLocation}`}
+              </p>
               <p className="text-sm text-gray-600 mb-4">Customer: {selectedBooking.user?.name}</p>
               
               <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
@@ -347,6 +368,7 @@ const BookingManagement: React.FC = () => {
                 <option value="upcoming">Upcoming</option>
                 <option value="active">Active</option>
                 <option value="completed">Completed</option>
+                <option value="accepted">Accepted</option>
                 <option value="cancelled">Cancelled</option>
               </select>
             </div>
