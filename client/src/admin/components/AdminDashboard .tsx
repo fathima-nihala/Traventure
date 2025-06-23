@@ -1,4 +1,4 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import DefaultLayout from '../layout/DefaultLayout';
 import Loader from '../../common/Loader';
@@ -6,6 +6,7 @@ import DashHome from '../components/Pages/DashHome'
 import Profile from './Pages/Profile';
 import PackagesList from './Pages/packages/PackagesList';
 import UserBookings from './Pages/booking/UserBookings';
+import BookingManagement from './Pages/booking/BookingManagement';
 
 
 const AdminDashboard = () => {
@@ -29,9 +30,10 @@ const AdminDashboard = () => {
     <DefaultLayout>
       <Routes>
         <Route path="" element={<DashHome />} />
-        <Route path='/profile' element={<Profile/>}/>
-        <Route path='/packages' element={<PackagesList/>}/>
-        <Route path='/bookings' element={<UserBookings/>}/>
+        <Route path='/profile' element={<Profile />} />
+        <Route path='/packages' element={<PackagesList />} />
+        <Route path='/bookings' element={<UserBookings />} />
+        <Route path='/booking-management' element={<BookingManagement />} />
       </Routes>
     </DefaultLayout>
   );
