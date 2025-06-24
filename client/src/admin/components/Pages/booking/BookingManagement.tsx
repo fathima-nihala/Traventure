@@ -12,8 +12,12 @@ import {
   selectBookingError,
   selectBookingSuccess,
   selectBookingAnalytics,
-  type Booking // Import the Booking type from the slice
+  // type Booking // Import the Booking type from the slice
 } from '../../../../redux/slices/bookingSlice';
+
+// import Booking from '../../types/booking.types'
+import type { Booking } from '../../types/booking.types';
+
 
 interface TopUser {
   _id: string;
@@ -73,7 +77,7 @@ const BookingManagement: React.FC = () => {
     }
     
     // If bookingStatus exists, use that
-    if (booking.bookingStatus) {
+    if (booking?.bookingStatus) {
       return booking.bookingStatus;
     }
     

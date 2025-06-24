@@ -72,6 +72,12 @@ exports.getUserBookings = catchAsyncError(async (req, res) => {
         const today = new Date();
         bookings = bookings.filter(booking => {
             const pkg = booking.package;
+
+             // Handle explicit status filtering
+            if (['pending', 'accepted', 'cancelled'].includes(status)) {
+                return booking.status === status;
+            }
+            
             if (status === 'completed') return pkg.endDate < today;
             if (status === 'active') return pkg.startDate <= today && today <= pkg.endDate;
             if (status === 'upcoming') return pkg.startDate > today;
@@ -102,6 +108,11 @@ exports.getAllBookings = catchAsyncError(async (req, res) => {
             const today = new Date();
             bookings = bookings.filter(booking => {
                 const pkg = booking.package;
+
+                 if (['pending', 'accepted', 'cancelled'].includes(status)) {
+                    return booking.status === status;
+                }
+
                 if (status === 'completed') return pkg.endDate < today;
                 if (status === 'active') return pkg.startDate <= today && today <= pkg.endDate;
                 if (status === 'upcoming') return pkg.startDate > today;
@@ -124,6 +135,12 @@ exports.updateBookingStatus = catchAsyncError(async (req, res) => {
         const { id } = req.params;
         const { status } = req.body;
 
+         // Validate status
+        const validStatuses = ['pending', 'accepted', 'cancelled', 'completed'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: 'Invalid status' });
+        }
+
         const booking = await Booking.findById(id);
         if (!booking) {
             return res.status(404).json({ message: 'Booking not found' });
@@ -145,22 +162,126 @@ exports.updateBookingStatus = catchAsyncError(async (req, res) => {
 });
 
 // Booking analytics (admin only)
+// exports.getBookingAnalytics = catchAsyncError(async (req, res) => {
+//     try {
+//         const totalBookings = await Booking.countDocuments();
+
+//         const today = new Date();
+//         const packages = await Package.find();
+
+//         let completed = 0, active = 0, upcoming = 0;
+        
+
+//         for (const pkg of packages) {
+//             const count = await Booking.countDocuments({ package: pkg._id });
+//             if (pkg.endDate < today) completed += count;
+//             else if (pkg.startDate <= today && today <= pkg.endDate) active += count;
+//             else upcoming += count;
+//         }
+
+//         const topUsers = await Booking.aggregate([
+//             {
+//                 $group: {
+//                     _id: '$user',
+//                     bookingsCount: { $sum: 1 },
+//                     totalSpent: { $sum: '$totalPrice' }
+//                 }
+//             },
+//             {
+//                 $lookup: {
+//                     from: 'users',
+//                     localField: '_id',
+//                     foreignField: '_id',
+//                     as: 'userDetails'
+//                 }
+//             },
+//             { $unwind: '$userDetails' },
+//             {
+//                 $project: {
+//                     _id: 1,
+//                     bookingsCount: 1,
+//                     totalSpent: 1,
+//                     name: '$userDetails.name',
+//                     email: '$userDetails.email'
+//                 }
+//             },
+//             { $sort: { bookingsCount: -1 } },
+//             { $limit: 10 }
+//         ]);
+
+//         res.status(200).json({
+//             totalBookings,
+//             statusCounts: { completed, active, upcoming },
+//             topUsers
+//         });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Failed to fetch analytics', error: error.message });
+
+//     }
+
+// });
+
+// Booking analytics (admin only)
 exports.getBookingAnalytics = catchAsyncError(async (req, res) => {
     try {
         const totalBookings = await Booking.countDocuments();
 
+        // Get status counts from the actual booking status field
+        const statusCounts = await Booking.aggregate([
+            {
+                $group: {
+                    _id: '$status',
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        // Initialize status counts
+        let pending = 0, accepted = 0, cancelled = 0, completed = 0;
+        
+        // Map the aggregation results to variables
+        statusCounts.forEach(status => {
+            switch(status._id) {
+                case 'pending':
+                    pending = status.count;
+                    break;
+                case 'accepted':
+                    accepted = status.count;
+                    break;
+                case 'cancelled':
+                    cancelled = status.count;
+                    break;
+                case 'completed':
+                    completed = status.count;
+                    break;
+            }
+        });
+
+        // Get date-based status counts (active, upcoming, completed based on package dates)
         const today = new Date();
-        const packages = await Package.find();
+        
+        // Get all bookings with populated package data for date-based filtering
+        const bookingsWithPackages = await Booking.find({ status: { $ne: 'cancelled' } })
+            .populate('package', 'startDate endDate');
 
-        let completed = 0, active = 0, upcoming = 0;
+        let activeDateBased = 0, upcomingDateBased = 0, completedDateBased = 0;
 
-        for (const pkg of packages) {
-            const count = await Booking.countDocuments({ package: pkg._id });
-            if (pkg.endDate < today) completed += count;
-            else if (pkg.startDate <= today && today <= pkg.endDate) active += count;
-            else upcoming += count;
-        }
+        bookingsWithPackages.forEach(booking => {
+            if (booking.package) {
+                const packageStartDate = new Date(booking.package.startDate);
+                const packageEndDate = new Date(booking.package.endDate);
 
+                if (packageEndDate < today) {
+                    completedDateBased++;
+                } else if (packageStartDate <= today && today <= packageEndDate) {
+                    activeDateBased++;
+                } else if (packageStartDate > today) {
+                    upcomingDateBased++;
+                }
+            }
+        });
+
+        // Get top users by booking count and total spent
         const topUsers = await Booking.aggregate([
             {
                 $group: {
@@ -191,15 +312,69 @@ exports.getBookingAnalytics = catchAsyncError(async (req, res) => {
             { $limit: 10 }
         ]);
 
+        // Calculate total revenue
+        const revenueData = await Booking.aggregate([
+            {
+                $match: { status: { $ne: 'cancelled' } }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalRevenue: { $sum: '$totalPrice' }
+                }
+            }
+        ]);
+
+        const totalRevenue = revenueData.length > 0 ? revenueData[0].totalRevenue : 0;
+
+        // Get monthly booking trends (last 12 months)
+        const twelveMonthsAgo = new Date();
+        twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+
+        const monthlyTrends = await Booking.aggregate([
+            {
+                $match: {
+                    bookingDate: { $gte: twelveMonthsAgo }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: '$bookingDate' },
+                        month: { $month: '$bookingDate' }
+                    },
+                    bookingsCount: { $sum: 1 },
+                    revenue: { $sum: '$totalPrice' }
+                }
+            },
+            {
+                $sort: { '_id.year': 1, '_id.month': 1 }
+            }
+        ]);
+
         res.status(200).json({
             totalBookings,
-            statusCounts: { completed, active, upcoming },
-            topUsers
+            totalRevenue,
+            statusCounts: {
+                pending,
+                accepted,
+                cancelled,
+                completed
+            },
+            dateBasedStatus: {
+                active: activeDateBased,
+                upcoming: upcomingDateBased,
+                completed: completedDateBased
+            },
+            topUsers,
+            monthlyTrends
         });
+
     } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch analytics', error: error.message });
-
+        console.error('Get booking analytics error:', error);
+        res.status(500).json({ 
+            message: 'Failed to fetch analytics', 
+            error: error.message 
+        });
     }
-
 });
-

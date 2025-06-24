@@ -1,4 +1,4 @@
-    import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Calendar, MapPin, Clock, CheckCircle, XCircle, ChevronLeft, ChevronRight, X } from 'lucide-react';
@@ -54,11 +54,11 @@ const PackageDetailPage: React.FC = () => {
 
   const calculateTotalPrice = () => {
     if (!selectedPackage) return;
-    
+
     let price = selectedPackage.basePrice;
     if (selectedServices.food) price += selectedPackage.foodPrice;
     if (selectedServices.accommodation) price += selectedPackage.accommodationPrice;
-    
+
     setTotalPrice(price);
   };
 
@@ -108,7 +108,7 @@ const PackageDetailPage: React.FC = () => {
 
   const nextImage = () => {
     if (selectedPackage?.images) {
-      setCurrentImageIndex((prev) => 
+      setCurrentImageIndex((prev) =>
         prev === selectedPackage.images.length - 1 ? 0 : prev + 1
       );
     }
@@ -116,7 +116,7 @@ const PackageDetailPage: React.FC = () => {
 
   const prevImage = () => {
     if (selectedPackage?.images) {
-      setCurrentImageIndex((prev) => 
+      setCurrentImageIndex((prev) =>
         prev === 0 ? selectedPackage.images.length - 1 : prev - 1
       );
     }
@@ -167,36 +167,35 @@ const PackageDetailPage: React.FC = () => {
                     className="w-full h-96 object-cover cursor-pointer"
                     onClick={() => openImageGallery(currentImageIndex)}
                   />
-                  
+
                   {selectedPackage.images.length > 1 && (
                     <>
                       <button
                         onClick={prevImage}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-opacity"
+                        className="absolute left-2 top-1/2 cursor-pointer transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-opacity"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
-                      
+
                       <button
                         onClick={nextImage}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-opacity"
+                        className="absolute right-2 top-1/2 cursor-pointer transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-opacity"
                       >
                         <ChevronRight className="w-5 h-5" />
                       </button>
-                      
+
                       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                         {selectedPackage.images.map((_, index) => (
                           <button
                             key={index}
                             onClick={() => setCurrentImageIndex(index)}
-                            className={`w-2 h-2 rounded-full transition-colors ${
-                              index === currentImageIndex ? 'bg-white' : 'bg-white bg-opacity-50'
-                            }`}
+                            className={`w-2 h-2 rounded-full transition-colors ${index === currentImageIndex ? 'bg-white' : 'bg-white bg-opacity-50'
+                              }`}
                           />
                         ))}
                       </div>
-                      
-                      <div className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded">
+
+                      <div className="absolute bottom-4  right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded">
                         {currentImageIndex + 1} / {selectedPackage.images.length}
                       </div>
                     </>
@@ -207,7 +206,7 @@ const PackageDetailPage: React.FC = () => {
                   <span className="text-gray-500">No image available</span>
                 </div>
               )}
-              
+
               {/* Thumbnail Strip */}
               {selectedPackage.images && selectedPackage.images.length > 1 && (
                 <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
@@ -216,9 +215,8 @@ const PackageDetailPage: React.FC = () => {
                       key={index}
                       src={image}
                       alt={`Thumbnail ${index + 1}`}
-                      className={`w-20 h-16 object-cover rounded cursor-pointer flex-shrink-0 border-2 transition-colors ${
-                        index === currentImageIndex ? 'border-blue-500' : 'border-transparent'
-                      }`}
+                      className={`w-20 h-16 object-cover rounded cursor-pointer flex-shrink-0 border-2 transition-colors ${index === currentImageIndex ? 'border-blue-500' : 'border-transparent'
+                        }`}
                       onClick={() => setCurrentImageIndex(index)}
                     />
                   ))}
@@ -232,11 +230,11 @@ const PackageDetailPage: React.FC = () => {
                 <MapPin className="w-4 h-4" />
                 <span>{selectedPackage.fromLocation} → {selectedPackage.toLocation}</span>
               </div>
-              
+
               <h1 className="text-3xl font-bold text-gray-900 mb-4">
                 {selectedPackage.toLocation} Travel Package
               </h1>
-              
+
               <div className="flex items-center gap-4 mb-6">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-5 h-5 text-blue-600" />
@@ -388,13 +386,13 @@ const PackageDetailPage: React.FC = () => {
               >
                 <X className="w-8 h-8" />
               </button>
-              
+
               <img
                 src={selectedPackage.images[currentImageIndex]}
                 alt={`${selectedPackage.toLocation} - Full size`}
                 className="max-w-full max-h-full object-contain"
               />
-              
+
               {selectedPackage.images.length > 1 && (
                 <>
                   <button
@@ -403,14 +401,14 @@ const PackageDetailPage: React.FC = () => {
                   >
                     <ChevronLeft className="w-12 h-12" />
                   </button>
-                  
+
                   <button
                     onClick={nextImage}
                     className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300"
                   >
                     <ChevronRight className="w-12 h-12" />
                   </button>
-                  
+
                   <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-lg">
                     {currentImageIndex + 1} / {selectedPackage.images.length}
                   </div>
@@ -425,7 +423,7 @@ const PackageDetailPage: React.FC = () => {
           <div className="fixed inset-0 backdrop-blur-lg  bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-xl ">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Complete Your Booking</h2>
-              
+
               {bookingError && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
                   {bookingError}
@@ -435,7 +433,7 @@ const PackageDetailPage: React.FC = () => {
               <form onSubmit={handleBookingSubmit}>
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-3">Select Additional Services</h3>
-                  
+
                   {!selectedPackage.includedServices.food && (
                     <label className="flex items-center gap-3 mb-3 cursor-pointer">
                       <input

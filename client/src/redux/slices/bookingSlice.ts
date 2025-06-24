@@ -60,6 +60,7 @@ export interface Booking {
   totalPrice: number;
   status: string;
   bookingDate: Date;
+  bookingStatus?: string;
 }
 
 export interface NewBooking {
@@ -78,6 +79,7 @@ interface BookingAnalytics {
     completed: number;
     active: number;
     upcoming: number;
+    cancelled: number
   };
   topUsers: {
     _id: string;

@@ -1,4 +1,4 @@
-  // types/booking.types.ts
+// types/booking.types.ts
 export interface User {
   _id: string;
   name: string;
@@ -18,7 +18,7 @@ export interface Package {
     accommodation: boolean;
   };
   startDate: Date; // Changed to Date to match Redux slice
-  endDate: Date;   // Changed to Date to match Redux slice
+  endDate: Date; // Changed to Date to match Redux slice
   location: string;
   images: string[];
   capacity: number;
@@ -40,6 +40,7 @@ export interface Booking {
   totalPrice: number;
   status: string; // Changed to string to match Redux slice
   bookingDate: Date; // Changed to Date to match Redux slice
+  bookingStatus?: string;
 }
 
 export interface UserBookingGroup {
@@ -56,6 +57,15 @@ export interface StatusCounts {
   completed: number;
   active: number;
   upcoming: number;
+  cancelled: number;
+  pending?: number;
+  accepted?: number;
+}
+
+export interface DateBasedStatus {
+  active: number;
+  upcoming: number;
+  completed: number;
 }
 
 export interface TopUser {
@@ -66,12 +76,26 @@ export interface TopUser {
   totalSpent: number;
 }
 
+export interface MonthlyTrend {
+  _id: {
+    year: number;
+    month: number;
+  };
+  bookingsCount: number;
+  revenue: number;
+}
+
 export interface BookingAnalytics {
   totalBookings: number;
-  statusCounts: {
-    completed: number;
-    active: number;
-    upcoming: number;
-  };
+  totalRevenue: number;
+  // statusCounts: {
+  //   completed: number;
+  //   active: number;
+  //   upcoming: number;
+  //   cancelled: number;
+  // };
+  statusCounts: StatusCounts;
+  dateBasedStatus: DateBasedStatus;
   topUsers: TopUser[];
+  monthlyTrends: MonthlyTrend[];
 }
